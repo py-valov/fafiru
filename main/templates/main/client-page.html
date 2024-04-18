@@ -1,0 +1,487 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load payment_tags %}
+{% block csslink%}
+  <link rel="stylesheet" href="{% static 'client-page/css/client-page.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <div class="page">
+    <div class="container">
+      <div class="page-client__head">
+        <div class="page-client__head-content">
+          <h2 class="page-client__head-name">{{ p.name }}</h2>
+          <h2 class="page-client__head-info string">
+            Код: {{ p.kod }} | Договор: {{ p.contract }} | Агент: {{ p.agent }} | Email: {{ p.email }}
+          </h2>
+        </div>
+        <div class="page-client__head-line">
+          <div class="page-client__head-line-item"></div>
+        </div>
+      </div>
+      <!-- /.page-client__head -->
+
+      <div class="page-client__appeal">
+        <div class="page-client__appeal-head">
+          <a href="{% url 'appealPage' %}" class="page-appeal-h">Задачи &#128366;</a>
+          <div class="page-appeal-filter">
+            <div class="btn-filter btn-all btn-filter__active">Все</div>
+            <div class="btn-filter btn-true">Готово</div>
+            <div class="btn-filter btn-false">Не готово</div>
+          </div>
+          {% if user.is_superuser or user.group != "Обычный" %}
+          <div class="page__btn">Добавить</div>
+          {% else %}
+          <div></div>
+          {% endif %}
+        </div>
+        <div class="page-client__appeal__content">
+
+          {% for ap in appeal %}
+          <a href="{% url 'appeal' ap.id %}" class="page-client__appeal__content-item">
+            <div class="page-client__appeal__content-item__left">
+              <p class="page-client__appeal__content-item-date">
+                {{ ap.date|date:"d.m.Y" }}
+              </p>
+              <p class="page-client__appeal__content-item-status">{{ ap.category }}</p>
+              <p class="page-client__appeal__content-item-status done-appeal">{{ ap.doneAppeal }}</p>
+            </div>
+            <div class="page-client__appeal__content-item__right">
+              <p class="page-client__appeal__content-item-info string">
+                {{ ap.content }}
+              </p>
+            </div>
+          </a>
+          {% endfor %}
+          <!-- /.page-client__appeal__content-item -->
+          
+
+        </div>
+      </div>
+      <!-- /.page-client__appeal -->
+
+      <div class="page-client__balance">
+        <div class="page-client__balance-head">
+          <h3 class="page-appeal-h">Баланс клиента по контракту YY2018-30</h3>
+        </div>
+        <div class="page-client__balance-info">
+          <div class="page-client__balance-item">
+            <p class="page-client__balance-title">Выкуплено</p>
+            <p class="page-client__balance-data check-balance">{{ totalPriceInUSD|floatformat:"2g" }}$</p>
+          </div>
+
+          <div class="page-client__balance-item">
+            <p class="page-client__balance-title">Провезено</p>
+            <p class="page-client__balance-data product-balance">{{ totalDeliveryInUSD|floatformat:"2g" }}$</p>
+          </div>
+
+          <div class="page-client__balance-item">
+            <p class="page-client__balance-title">Баланс $</p>
+            <p 
+            class="page-client__balance-data total-balance"
+            title="Баланс выше нуля - должны привезти товара, баланс ниже нуля - клиент должен отправить денег в Китай"
+            >
+              {{ BalanceInUSD|floatformat:"2g" }}$
+            </p>
+          </div>
+        </div>
+      </div>
+      <!-- /.page-client__balance -->
+
+      <div class="page-client__tables">
+        <div class="page-client__table">
+          <div class="page-client__table__name-block ">
+            <a href="{% url 'finance' %}" class="page-appeal-h">Оплаты за товар &#63754;</a>
+            {% if user.is_superuser or user.group == "Финансы" %}
+            <div class="table-btn">Добавить счет</div>
+            {% endif %}
+          </div>
+          
+          <div class="page-client__table-items">
+            {% for ch in check %}
+            {% if ch.status %}
+              <a href="{% url 'payment' ch.id %}" class="table-item item-positive">
+              <div class="table-item-top">
+                <div
+                  class="table-item-top__block block-head__little-table"
+                  title="Дата счета - номер контракта"
+                >
+                  <p class="table-p table-p-bold">{{ ch.date|date:"d.m.Y" }} - {{ ch.ContractNumber }}</p>
+                </div>
+                <div
+                  class="table-item-top__block block-head__little-table"
+                  title="Формула счета"
+                >
+                  <p class="table-p table-p-bold">
+                    {{ ch.price|floatformat:"2g" }}
+                    {{ ch.wellCheck }}
+                    *
+                    {{ ch.well }}
+                    {% if ch.commissionPercent and ch.commissionRUB and ch.commissionUSD %}
+                      / {{ch.commissionPercent}} + {{ch.commissionUSD}} * {{ch.wellCommissionUSD}} + {{ch.commissionRUB}}
+                    {% elif ch.commissionPercent and ch.commissionRUB %}
+                      / {{ch.commissionPercent}} + {{ch.commissionRUB}}
+                    {% elif ch.commissionPercent and ch.commissionUSD %}
+                      / {{ch.commissionPercent}} + {{ch.commissionUSD}} * {{ch.wellCommissionUSD}}
+                    {% elif ch.commissionPercent %}
+                      / {{ch.commissionPercent}}
+                    {% elif ch.commissionUSD %}
+                      + {{ch.commissionUSD}} * {{ch.wellCommissionUSD}}
+                    {% elif ch.commissionRUB %}
+                      + {{ch.commissionRUB}}
+                    {% endif %}
+                  </p>
+                </div>
+                <div
+                  class="table-item-top__block block-head-deactive"
+                  title="Категория товара"
+                >
+                  <p class="table-p"></p>
+                </div>
+              </div>
+              <div class="table-item-bottom" title="Наименование товара">
+                <p class="table-p">
+                  <span class="table-span">{{ ch.product }}</span>
+                </p>
+              </div>
+            </a>
+            <!-- /.table-item -->
+            {% else %}
+            <a href="{% url 'payment' ch.id %}" class="table-item">
+              <div class="table-item-top">
+                <div
+                  class="table-item-top__block block-head__little-table"
+                  title="Дата счета - номер контракта"
+                >
+                  <p class="table-p table-p-bold">{{ ch.date|date:"d.m.Y" }} - {{ ch.ContractNumber }}</p>
+                </div>
+                <div
+                  class="table-item-top__block block-head__little-table"
+                  title="Формула счета"
+                >
+                  <p class="table-p table-p-bold">
+                    {{ ch.price|floatformat:"2g" }}
+                    {{ ch.wellCheck }}
+                    *
+                    {{ ch.well }}
+                    {% if ch.commissionPercent and ch.commissionRUB and ch.commissionUSD %}
+                      / {{ch.commissionPercent}} + {{ch.commissionUSD}} * {{ch.wellCommissionUSD}} + {{ch.commissionRUB}}
+                    {% elif ch.commissionPercent and ch.commissionRUB %}
+                      / {{ch.commissionPercent}} + {{ch.commissionRUB}}
+                    {% elif ch.commissionPercent and ch.commissionUSD %}
+                      / {{ch.commissionPercent}} + {{ch.commissionUSD}} * {{ch.wellCommissionUSD}}
+                    {% elif ch.commissionPercent %}
+                      / {{ch.commissionPercent}}
+                    {% elif ch.commissionUSD %}
+                      + {{ch.commissionUSD}} * {{ch.wellCommissionUSD}}
+                    {% elif ch.commissionRUB %}
+                      + {{ch.commissionRUB}}
+                    {% endif %}
+                  </p>
+                </div>
+                <div
+                  class="table-item-top__block block-head-deactive"
+                  title="Категория товара"
+                >
+                  <p class="table-p"></p>
+                </div>
+              </div>
+              <div class="table-item-bottom" title="Наименование товара">
+                <p class="table-p">
+                  <span class="table-span">{{ ch.product }}</span>
+                </p>
+              </div>
+            </a>
+            <!-- /.table-item -->
+            {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+        <div class="page-client__table">
+          <div class="page-client__table__name-block ">
+            <h3 class="page-appeal-h">Пакинги &#9951;</h3>
+          </div>
+          <div class="page-client__table-items">
+            {% for paking in pakings %}
+            <a href="{% url 'item' paking.pk %}" class="table-item">
+              <div class="table-item-top">
+                <div
+                  class="table-item-top__block block-head__little-table"
+                  title="Дата пакинга"
+                >
+                  <p class="table-p"> <strong>{{ paking.date|date:"d.m.Y" }}</strong> </p>
+                </div>
+                <div
+                  class="table-item-top__block block-head__little-table"
+                  title="Название пакинга - номер контракта"
+                >
+                  <p class="table-p">{{ paking.namePaking }} - <strong> {{ paking.ContractNumber }} </strong></p>
+                </div>
+                <div
+                  class="table-item-top__block block-head-deactive"
+                  title="Категория товара"
+                >
+                  <p class="table-p">Одежда</p>
+                </div>
+              </div>
+              <div
+                class="table-item-bottom"
+                title="Наименование товара, вес, объем, Стоимость товара"
+              >
+                <p class="table-p">
+                  <span class="table-span">{{ paking.nameProduct|frf020 }}</span>,
+                  <span class="table-span"> <strong>{{ paking.weight|floatformat:"2g" }}кг</strong></span>,
+                  <span class="table-span"> <strong>{{ paking.volume|floatformat:"2g" }}м&sup3;</strong></span>,
+                  <span class="table-span">Стоимость: <strong>{{ paking.price|floatformat:"2g" }}{{ paking.currency }}</strong> </span>
+                </p>
+              </div>
+            </a>
+            <!-- /.table-item -->
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <!-- /.page-client__tables -->
+      <div class="page-client__tables">
+        <div class="page-client__table page-client__table-bold">
+          <div class="page-client__table__name-block ">
+            <h3 class="page-appeal-h">Провозы &#9951;</h3>
+          </div>
+          <div class="page-client__table-items page-client__table-items-bold">
+            {% for transport in transports %}
+            <a href="" class="table-item">
+              <div class="table-item-top">
+                <div
+                  class="table-item-top__block block-head__little-table"
+                  title="Дата пакинга"
+                >
+                  <p class="table-p"> <strong>{{ transport.transport_id.date_create|date:"d.m.Y" }} - {{ transport.transport_id.name }}</strong> </p>
+                </div>
+                <div
+                  class="table-item-top__block block-head__little-table"
+                  title="Название пакинга - номер контракта"
+                >
+                  <p class="table-p">Тип: {{ transport.transport_id.category }} | Страна: {{ transport.transport_id.region }} | <strong>Статус: {{ transport.transport_id.status }}</strong></p>
+                </div>
+                <div
+                  class="table-item-top__block block-head-deactive"
+                  title="Категория товара"
+                >
+                  <p class="table-p">Одежда</p>
+                </div>
+              </div>
+              <div
+                class="table-item-bottom"
+                title="Наименование товара, вес, объем, Стоимость товара"
+              >
+                <p class="table-p">
+                    <span class="table-span"></span>,
+                    <span class="table-span"> <strong>кг</strong></span>,
+                    <span class="table-span"> <strong>м&sup3;</strong></span>,
+                    <span class="table-span">Стоимость: <strong></strong> </span>
+                </p>
+              </div>
+            </a>
+            <!-- /.table-item -->
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <!-- /.page-client__tables -->
+    </div>
+  </div>
+  <!-- /.page -->
+{% endblock %}
+{% block popup %}
+  {% if user.is_superuser or user.group != "Обычный" %}
+  <div class="popup__create-appeal">
+    <form class="popup__create-appeal-content" action="{% url 'client' p.pk %}" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <input type="hidden" name="typeForm" value="newAppeal">
+      <div class="popup__create-appeal__head">
+        <button class="popup__create-appeal__btn">Сохранить</button>
+        <div class="popup__create-appeal__exit"></div>
+      </div>
+      <div class="popup__create-appeal__body">
+        <div class="popup__create-appeal__body-top">
+          <div class="popup__create-appeal__body-top-item">
+            <label
+              class="popup__create-appeal__body-top-label"
+              for="popup-appeal__input"
+              >Дата</label
+            >
+            {{ formAppeal.date }}
+          </div>
+          <!-- /.popup__create-appeal__body-top-item -->
+
+          <div class="popup__create-appeal__body-top-item">
+            <label
+              class="popup__create-appeal__body-top-label"
+              for="popup-appeal__select"
+              >Категория</label
+            >
+            {{ formAppeal.category }}
+          </div>
+          <!-- /.popup__create-appeal__body-top-item -->
+        </div>
+        <div class="popup__create-appeal__body-bottom">
+          <div class="popup__create-appeal__body-bottom-item">
+            <label
+              class="popup__create-appeal__body-top-label"
+              for="popup-appeal__select"
+              >Тема обращения</label
+            >
+            {{ formAppeal.content }}
+          </div>
+          
+          <label
+            for="id_file"
+            class="popup-history__btn-file"
+            >Загрузить</label
+          >
+          <input type="file" name="file" id="id_file" class="popup-history__file">
+          <input type="hidden" name="client" value={{ p.pk }}>
+          <input type="hidden" name="user_create" id="id_user_create" value="{{ user.pk }}">
+        </div>
+      </div>
+    </form>
+  </div>
+  <!-- /.popup__create-appeal -->
+  {% endif %}
+
+  {% if user.is_superuser or user.group == "Финансы" %}
+  <!-- Попап добавления платежа -->
+    <div class="popup__check">
+      <form
+        action="{% url 'client' p.pk %}"
+        method="post"
+        class="popup__check-content"
+        enctype="multipart/form-data"
+      >
+      {% csrf_token %}
+        <input type="hidden" name="typeForm" value="newCheck">
+        <div class="popup__check-header">
+          <h3 class="popup__check-header-h">Добавить счет</h3>
+        </div>
+        <div class="popup__check-body">
+          <input type="hidden" name="client" value={{ p.pk }}>
+          <div class="popup__check-block">
+            <div class="popup__check-block-item">
+              <div class="popup__check-block-item-p">Дата</div>
+              {{ checkForm.date }}
+            </div>
+            <!-- /.popup__check-block-item -->
+
+            <div class="popup__check-block-item">
+              <div class="popup__check-block-item-p">Тип платежа</div>
+              {{ checkForm.currency }}
+            </div>
+            <!-- /.popup__check-block-item -->
+          </div>
+          <!-- /.popup__check-block -->
+
+          <div class="popup__check-block">
+            <!-- /.popup__check-block-item -->
+            <div class="popup__check-block-item">
+              <div class="popup__check-block-item-p">Курс</div>
+              {{ checkForm.well }}
+            </div>
+            <div class="popup__check-block-item">
+              <div class="popup__check-block-item-p">Курс за перевод</div>
+              {{ checkForm.wellCommissionUSD }}
+            </div>
+            <!-- /.popup__check-block-item -->
+            <!-- /.popup__check-block-item -->
+            <div class="popup__check-block-item">
+              <div class="popup__check-block-item-p">За перевод</div>
+              <select
+                name=""
+                id=""
+                class="popup__check-block-item-p-data popup__select-data"
+              >
+                <option selected="selected">%</option>
+                <option>$</option>
+                <option>₽</option>
+                <option>% + $</option>
+                <option>% + ₽</option>
+                <option>$ + ₽</option>
+                <option>% + $ + ₽</option>
+              </select>
+            </div>
+            <!-- /.popup__check-block-item -->
+          </div>
+          <!-- /.popup__check-block -->
+
+          <div class="popup__check-block">
+            <div class="popup__check-block-item input-none inputOne input-active">
+              <div class="popup__check-block-item-p">% за перевод</div>
+              {{ checkForm.commissionPercent }}
+            </div>
+            <!-- /.popup__check-block-item -->
+            <div class="popup__check-block-item input-none inputTwo">
+              <div class="popup__check-block-item-p">$ за перевод</div>
+              {{ checkForm.commissionUSD }}
+            </div>
+            <!-- /.popup__check-block-item -->
+            <div class="popup__check-block-item input-none inputThree">
+              <div class="popup__check-block-item-p">₽ за перевод</div>
+              {{ checkForm.commissionRUB }}
+            </div>
+            <!-- /.popup__check-block-item -->
+          </div>
+
+          <div class="popup__check-block">
+
+            <div class="popup__check-block-item">
+              <div class="popup__check-block-item-p">Стоимость</div>
+              {{ checkForm.price }}
+            </div>
+            <!-- /.popup__check-block-item -->
+
+            <div class="popup__check-block-item">
+              <div class="popup__check-block-item-p">Валюта инвойса</div>
+              {{ checkForm.wellCheck }}
+            </div>
+            <!-- /.popup__check-block-item -->
+
+            <div class="popup__check-block-item">
+              <div class="popup__check-block-item-p">Номер контракта</div>
+              {{ checkForm.ContractNumber }}
+
+              <datalist id="ContractNumber">
+                <option value="YY-2018"></option>
+              </datalist>
+            </div>
+            <!-- /.popup__check-block-item -->
+          </div>
+          <!-- /.popup__check-block -->
+
+          <div class="popup__check-block">
+            <div class="popup__check__content-product">
+              <div class="popup__check__content-p">Товар</div>
+              {{ checkForm.product }}
+            </div>
+          </div>
+          <!-- /.popup__check-block -->
+        </div>
+
+        <div class="popup__check-file">
+          <!-- file block start -->
+            {{ checkFile.PathFile }}
+            <input type="hidden" name="check_id" id="id_check_id" value={{ NewIdCheck }}>
+        </div>
+        <!-- /.popup__check-file -->
+        <div class="popup__check-btn">
+          <button class="popup__check__btn-save">Сохранить</button>
+          <div class="popup__check__btn-exit">Закрыть</div>
+        </div>
+      </form>
+    </div>
+    <!-- /.popup__check -->
+    {% endif %}
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'client-page/js/clientPage.js' %}"></script>
+    <script src="{% static 'client-page/js/open.js' %}"></script>
+{% endblock %}
+

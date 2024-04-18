@@ -1,0 +1,190 @@
+.balance-header {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+
+    width: 100%;
+    height: 50px;
+}
+
+.balance-form {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+
+    width: 100%;
+    height: 50px;
+}
+
+.balance-header-select {
+    width: 180px;
+    height: 24px;
+    outline: none;
+    font-size: 0.9rem;
+
+    border: 1px solid #78a1bb;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.balance-header-input {
+    width: 200px;
+    height: 24px;
+    outline: none;
+    font-size: 0.9rem;
+
+    border: 1px solid #78a1bb;
+    border-radius: 5px;
+    margin-right: 10px;
+    cursor: auto;
+}
+
+.balance-header-input-name {
+    display: none;
+}
+
+.balance-header-btn {
+    width: 100px;
+    height: 24px;
+
+    background-color: #78a1bb;
+    border-radius: 5px;
+    border: 1px solid #78a1bb;
+
+    outline: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.8s;
+}
+
+.balance-header-btn:hover {
+    background-color: #fff;
+    border-color: #000;
+}
+
+.balance-header-excel {
+    margin-left: 40px;
+    width: 100px;
+    height: 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: #00CC66;
+    border: 1px solid #000;
+    border-radius: 5px;
+
+    cursor: pointer;
+    transition: all 0.8s;
+}
+
+.balance-header-excel:hover {
+    background-color: #009933;
+}
+
+/* BODY */
+.balance-body-summ {
+    margin: 20px 0 0;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    width: 100%;
+    height: 30px;
+
+    border-bottom: 2px solid #cecece;
+}
+
+.balance-body-summ-item {
+    width: 250px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10px;
+
+    font-size: 0.9rem;
+    font-weight: 700;
+
+    background-color: #FFFF00;
+    border-radius: 5px;
+    border: 1px solid #000;
+}
+
+.balance-body-summ-positive {
+    background: #00CC66;
+}
+
+.balance-body-summ-negative {
+    background: #FF0033;
+}
+
+/* TABLE */
+.balance-body-table {
+    width: 100%;
+    height: 700px;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+}
+
+.balance-body-table-head {
+    width: 99%;
+    height: 30px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    align-items: center;
+    justify-content: space-around;
+    font-size: 1.1rem;
+    margin-right: 18px;
+}
+
+.balance-body-table-head-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+}
+
+.balance-body-table-content {
+    width: 100%;
+    font-size: 0.8rem;
+    overflow-y: scroll;
+    height: 100%;
+}
+
+.balance-body-table-content-item {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    align-items: center;
+    justify-content: space-around;
+    margin-top: 10px;
+}
+
+.balance-body-table-content-item-p {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 20px;
+}
+
+.balance-true {
+    background-color: #00CC66;
+    border: 1px solid #000;
+    border-radius: 5px;
+    
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.balance-false {
+    background-color: #FF0033;
+    border: 1px solid #000;
+    border-radius: 5px;
+
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+/* TABLE */
+/* BODY */

@@ -1,0 +1,1 @@
+[{"model": "main.clients", "pk": 1, "fields": {"kod": "FA-001", "name": "ООО \"ФУЛЕКС\"", "product": "Товар", "email": "", "contract": "Агентский", "agent": "Фаст Импорт"}}]

@@ -1,0 +1,1 @@
+[{"model": "main.appeal", "pk": 1, "fields": {"date": "2023-04-11", "content": "Вот", "category": "Информирование", "doneAppeal": false, "client": 1, "file": "appeal-files/2023/04/11/Допник_125_65744_CNY.pdf"}}]

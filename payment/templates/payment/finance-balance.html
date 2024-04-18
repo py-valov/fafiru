@@ -1,0 +1,86 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load payment_tags %}
+{% block csslink %}
+  <link rel="stylesheet" href="{% static 'finance-balance/css/finance-balance.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="page">
+    <div class="container">
+        <div class="balance-header">
+            <form
+            action="{% url 'balance' %}"
+            class="balance-form"
+            method="post"
+            >
+            {% csrf_token %}
+            <input type="hidden" name="type" value="SelectBalance">
+            <select name="typeBalance" id="" class="balance-header-select">
+                <option value="Валютный баланс">Валютный баланс</option>
+                <option value="Баланс контракта">Баланс контракта</option>
+            </select>
+            <input type="text" name="contract" value="YY2018-30" class="balance-header-input">
+            <input type="text" name="kodClient" placeholder="Код клиента" class="balance-header-input">
+
+            <button class="balance-header-btn">Выгрузить</button>
+            <div class="balance-header-excel">.xls&#9660;</div>
+            </form>
+            
+        </div>
+        <div class="balance-body">
+            <div class="balance-body-summ">
+                {% if typeBalance == 'Валютный баланс' %}
+                    {% for c in client %}
+                        <p class="balance-body-summ-item" title="{{ c.name }}">Клиент: "<strong>{{ c.kod }}</strong>" </p>
+                    {% endfor %}
+                {% elif typeBalance == 'Баланс контракта' %}
+                    <p class="balance-body-summ-item">Контракт: "<strong>{{ contract }}</strong>" </p>
+                {% endif %}
+                <div class="balance-body-summ-item balance-body-summ-positive">Выкуп: {{ totalPositive|floatformat:"2g" }}</div>
+                <div class="balance-body-summ-item balance-body-summ-negative">Провоз: {{ totalNegative|floatformat:"2g" }}</div>
+                <div class="balance-body-summ-item">Баланс: {{ totalBalance|floatformat:"2g" }}</div>
+            </div>
+            <div class="balance-body-table">
+                <div class="balance-body-table-head">
+                    {% if typeBalance == 'Баланс контракта' %}
+                        <p class="balance-body-table-head-item">Код</p>
+                    {% elif typeBalance == 'Валютный баланс' %}
+                        <p class="balance-body-table-head-item">Дата</p>
+                    {% endif %}
+                    
+                    <p class="balance-body-table-head-item">Выкуп</p>
+                    <p class="balance-body-table-head-item">Провоз</p>
+                    <p class="balance-body-table-head-item">Баланс</p>
+                    <p class="balance-body-table-head-item">Примечание</p>
+                </div>
+                <div class="balance-body-table-content">
+                    {% for i in info %}
+                    <div class="balance-body-table-content-item">
+                        {% if typeBalance == 'Баланс контракта' %}
+                            <a href="{% url 'client' i.client.pk %}" target="_blank" title="{{ i.client.name }}" class="balance-body-table-content-item-p">{{ i.client.kod }}</a>
+                        {% elif typeBalance == 'Валютный баланс' %}
+                            <p class="balance-body-table-content-item-p">{{ i.date|date:"d.m.Y" }}</p>
+                        {% endif %}
+                        <p class="balance-body-table-content-item-p">{{ i.price|floatformat:"2g" }}</p>
+                        <p class="balance-body-table-content-item-p">{{ i.delivery|floatformat:"2g" }}</p>
+                        <p class="balance-body-table-content-item-p balance-item">{{ i.balance|floatformat:"2g" }}</p>
+
+                        {% if typeBalance == 'Баланс контракта' %}
+                            <p class="balance-body-table-content-item-p"></p>
+                        {% elif typeBalance == 'Валютный баланс' %}
+                            <p class="balance-body-table-content-item-p">{{ i.comment }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'finance-balance/js/finance-balance.js' %}"></script>
+    <script src="{% static 'client-page/js/open.js' %}"></script>
+{% endblock %}

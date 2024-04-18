@@ -1,0 +1,78 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load payment_tags %}
+{% block csslink %}
+  <link rel="stylesheet" href="{% static 'appeal-comments/css/appeal-comments.css' %}" />
+{% endblock %}
+  
+{% block content %}
+<div class="page">
+  <div class="appeal-content">
+    <div class="appeal-main">
+
+      <div class="appeal-table">
+        <div class="appeal-table-head">
+          
+          <div class="appeal-table-head-footer">
+            <div class="appeal-table-head__elem-left"></div>
+            <a href="{% url 'appealPage' %}" class="appeal-page">&#8617; В задачи</a>
+            <h3 class="appeal-table-head__title">Последние комментарии</h3>
+          </div>
+
+          <div class="appeal-table-head__elem-bottom"></div>
+        </div>
+        <!-- /.appeal-table-head -->
+
+        <div class="appeal-table-body">
+          {% for comment in comments %}
+          <div class="appeal-table-body__block">
+            <div class="appeal-table-body__item">
+              <div class="appeal-table-body__item-head">
+                <p>{{ comment.date_create|date:"d.m.Y" }}: Комментатор <strong> {{ comment.user.first_name }} {{ comment.user.last_name }} </strong> </p>
+              </div>
+
+              <div class="appeal-table-panel">
+                {% if comment.file_comment %}
+                <a href="{{ comment.file_comment.url }}" class="file-link" target="__blank"> <span> {{ comment.file_comment|frf27  }} </span> </a>
+                {% endif %}
+              </div>
+
+              <div class="appeal-table-body__item-body">
+                <p class="appeal-table-body__item-body-p comment-p"> <strong> Комментарий: {{ comment.content|frf0130 }} </strong> </p>
+              </div>
+            </div>
+
+            <div class="appeal-table-body__item-elem">&rArr;</div>
+
+
+            <div class="appeal-table-body__item">
+              <div class="appeal-table-body__item-head">
+                <p title="{{ comment.appeal.client.kod }} {{ comment.appeal.client }}"> Задача: | {{ comment.appeal.category }} | {{ comment.appeal.client.kod }} от {{ comment.appeal.date|date:"d.m.Y" }} </strong> </p>
+              </div>
+
+              <div class="appeal-table-panel">
+                <a href="{% url 'appeal' comment.appeal.pk %}" class="appeal-table-panel-a" target="__blank">Открыть &rArr;</a>
+                {% if comment.file_comment %}
+                <a href="{{ comment.file_comment.url }}" class="file-link" target="__blank "> <span> {{ comment.file_comment|frf27  }} </span> </a>
+                {% endif %}
+              </div>
+
+              <div class="appeal-table-body__item-body">
+                <p class="appeal-table-body__item-body-p comment-p"> <span> Тема: {{ comment.appeal.content|frf0130 }} </span> </p>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <!-- /.appeal-main -->
+
+    
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'appeal-page/js/appeal-page.js' %}"></script>
+    <script src="{% static 'client-page/js/open.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load payment_tags %}
+
+{% block csslink%}
+<link rel="stylesheet" href="{% static 'transport/css/transport.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page">
+    <div class="content">
+        <div class="transport-block">
+
+            <div class="transport-block__title">
+                <p class="transport-block__title-p">Загрузка</p>
+            </div>
+            <!-- /.transport-block__title -->
+            {% for transport in transportLoading %}
+            <div class="transport-block__items">
+                <p> {{ transport.name|frf020 }} - {{transport.region}} </p>
+                <p> {{ transport.category }} от {{ transport.date_create|date:"d.m.Y" }}</p>
+                {% for task in transport.producttotransport_set.all %}
+                    <p class="transport-block__items-total-weight">{{ task.weight }}</p>
+                    <p class="transport-block__items-total-volume">{{ task.volume }}</p>
+                {% endfor %}
+            </div>
+            <!-- /.transport-block__items -->
+            {% endfor %}
+        </div>
+        <!-- /.transport-block -->
+
+        <div class="transport-block">
+
+            <div class="transport-block__title">
+                <p class="transport-block__title-p">СВХ</p>
+            </div>
+            <!-- /.transport-block__title -->
+            {% for transport in transportSVH %}
+            <div class="transport-block__items">
+                <p> {{ transport.name|frf020 }} - {{transport.region}} </p>
+                <p> Транспорт: {{ transport.category }} </p>
+                {% for task in transport.producttotransport_set.all %}
+                    <p class="transport-block__items-total-weight">{{ task.weight }}</p>
+                    <p class="transport-block__items-total-volume">{{ task.volume }}</p>
+                {% endfor %}
+            </div>
+            <!-- /.transport-block__items -->
+            {% endfor %}
+        </div>
+        <!-- /.transport-block -->
+
+        <div class="transport-block">
+
+            <div class="transport-block__title">
+                <p class="transport-block__title-p">Таможня</p>
+            </div>
+            <!-- /.transport-block__title -->
+            {% for transport in transportCustoms %}
+            <div class="transport-block__items">
+                <p> {{ transport.name|frf020 }} - {{transport.region}} </p>
+                <p> Транспорт: {{ transport.category }} </p>
+                {% for task in transport.producttotransport_set.all %}
+                    <p class="transport-block__items-total-weight">{{ task.weight }}</p>
+                    <p class="transport-block__items-total-volume">{{ task.volume }}</p>
+                {% endfor %}
+            </div>
+            <!-- /.transport-block__items -->
+            {% endfor %}
+        </div>
+        <!-- /.transport-block -->
+
+        <div class="transport-block">
+
+            <div class="transport-block__title">
+                <p class="transport-block__title-p">Выпуск/разгрузка</p>
+            </div>
+            <!-- /.transport-block__title -->
+            {% for transport in transportUnloading %}
+            <div class="transport-block__items">
+                <p> {{ transport.name|frf020 }} - {{transport.region}} </p>
+                <p> Транспорт: {{ transport.category }} </p>
+                {% for task in transport.producttotransport_set.all %}
+                    <p class="transport-block__items-total-weight">{{ task.weight }}</p>
+                    <p class="transport-block__items-total-volume">{{ task.volume }}</p>
+                {% endfor %}
+            </div>
+            <!-- /.transport-block__items -->
+            {% endfor %}
+        </div>
+        <!-- /.transport-block -->
+
+        <div class="transport-block">
+
+            <div class="transport-block__title">
+                <p class="transport-block__title-p">Отчетность на товар</p>
+            </div>
+            <!-- /.transport-block__title -->
+            {% for transport in transportProductReporting %}
+            <div class="transport-block__items">
+                <p> {{ transport.name|frf020 }} - {{transport.region}} </p>
+                <p> Транспорт: {{ transport.category }} </p>
+                {% for task in transport.producttotransport_set.all %}
+                    <p class="transport-block__items-total-weight">{{ task.weight }}</p>
+                    <p class="transport-block__items-total-volume">{{ task.volume }}</p>
+                {% endfor %}
+            </div>
+            <!-- /.transport-block__items -->
+            {% endfor %}
+        </div>
+        <!-- /.transport-block -->
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{% static 'transport/js/transport.js' %} "></script>
+  <script src="{% static 'main/js/open.js' %} "></script>
+{% endblock %}

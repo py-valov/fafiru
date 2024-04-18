@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Moon+Dance&family=Roboto:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="{% static 'modules/normalize.css' %} " />
+  <link rel="stylesheet" href="{% static 'modules/base.css' %} " />
+  <link rel="stylesheet" href="{% static 'modules/header.css' %} " />
+  <link rel="stylesheet" href="{% static 'modules/popup.css' %} " />
+  <link rel="shortcut icon" href="{% static 'main/images/favicon.ico' %}" type="image/x-icon">
+  <link rel="stylesheet" href="{% static 'authorization/css/authorization.css' %}">
+
+  <title>{{ title }}</title>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="block-form">
+      <div class="block-form__content">
+
+        <div class="block-form__string">
+        
+        <p class="block-form__string-h">Добро пожаловать!</p>
+        
+
+      </div>
+      {% if login.non_field_errors %}
+        {{ login.non_field_errors }}
+        {% endif %}
+        
+      <form 
+      class="block-form__form"
+      action="{% url 'authorization' %}"
+      method="post"
+      >
+      {% csrf_token %}
+        {{ login.username }}
+        {{ login.password }}
+        {% comment %} <input type="text" class="form-input" placeholder="Введите логин">
+        <input type="text" class="form-input" placeholder="Введите пароль"> {% endcomment %}
+        <button class="form-btn">Войти</button>
+      </form>
+
+      </div>
+    </div>
+    <div class="block-image">
+      <img src="{% static 'authorization/image/planet.png' %}" alt="&#9796" class="block-image__item">
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,1002 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load payment_tags %}
+{% block csslink%}
+    <link rel="stylesheet" href="{% static 'finance-page/css/finance-page.css' %}" />
+{% endblock %}
+
+{% block content %} 
+      <div class="page">
+        <div class="container">
+          <div class="page-content">
+            <div class="page-content__info">
+              <p class="page-content__info-item">
+                <span class="page-content__info-item-head">Сумма по счету</span>
+                <span class="page-content__info-item-data"
+                  >{{ summCheck|floatformat:"2g" }}₽</span
+                >
+              </p>
+              <p class="page-content__info-item">
+                <span class="page-content__info-item-head">Поступление</span>
+                <span class="page-content__info-item-data"
+                  >{{ operAdmisRUB|floatformat:"2g" }}₽</span
+                >
+              </p>
+              <p class="page-content__info-item">
+                <span class="page-content__info-item-head">Наши затраты</span>
+                <span class="page-content__info-item-data"
+                  >{{ expenses|floatformat:"2g" }}₽</span
+                >
+              </p>
+              <p class="page-content__info-item">
+                <span class="page-content__info-item-head">Остаток</span>
+                {% if balance >= 0 %}
+                  <span class="page-content__info-item-data item-green"
+                    >{{ balance|floatformat:"2g" }}₽</span
+                  >
+                {% else %}
+                  <span class="page-content__info-item-data negative"
+                    >{{ balance|floatformat:"2g" }}₽</span
+                  >
+                {% endif %}
+              </p>
+            </div>
+            <!-- /.page-content__info -->
+
+            <div class="page-content__check">
+              <div class="page-content__check__block-info">
+                <h2 class="page-content__check__block-info-h">
+                  Выставление счета
+                </h2>
+
+                <div class="page-content__check__block-info-create">
+                  {% if check.appeal_id %}
+                   <a href="{% url 'appeal' check.appeal_id %}" class="page-content__check__block-info-a-yellow">Перейти в задачу</a>
+                  {% else %}
+                  <form class="page-content__check__block-info-form" action="{% url 'payment' check.pk %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="typeForm" value="newAppeal">
+
+                    <input type="hidden" name="date" value="{{ today.day }}.{{ today.month }}.{{ today.year }}">
+                    <input type="hidden" name="category" value="Счета">
+                    <input type="hidden" name="content" value="{{ check.product }}">
+                    <input type="hidden" name="client" value={{ check.client.pk }}>
+                    <input type="hidden" name="user_create" id="id_user_create" value="{{ user.pk }}">
+
+                    <button class="page-content__check__block-info-a">Создать задачу</button>
+                  </form>
+                  {% endif %}
+
+                  {% if user.is_superuser or user.group == "Финансы" %}
+                  <button class="page-content__check__block-info-btn">
+                    Изменить
+                  </button>
+                  {% endif %}
+                </div>
+
+              </div>
+              <div class="page-content__check__content">
+                <div class="page-content__check__content-block">
+                  <a
+                      href = {% url 'client' check.client.id %}
+                      class="page-client__head-name"
+                      title="{{ check.client.kod }} - {{ check.client }}"
+                    >
+                      {{ check.client }}
+                  </a>
+                </div>
+                <div class="page-content__check__content-block">
+                  <div class="page-content__check__content-block-item">
+                    <div class="page-content__check__content-p">Дата</div>
+                    <div class="page-content__check__content-p-data">
+                      {{ check.date|date:"d.m.Y" }}
+                    </div>
+                  </div>
+                  <!-- /.page-content__check__content-block-item -->
+                  <div class="page-content__check__content-block-item">
+                    <div class="page-content__check__content-p">Тип оплаты</div>
+                    <div class="page-content__check__content-p-data">
+                      Оплата в {{ check.currency}}
+                    </div>
+                  </div>
+                  <!-- /.page-content__check__content-block-item -->
+                  <div class="page-content__check__content-block-item">
+                    <div class="page-content__check__content-p">
+                      Тип договора
+                    </div>
+                    <div class="page-content__check__content-p-data">
+                      {{ check.client.contract }}
+                    </div>
+                  </div>
+                  <!-- /.page-content__check__content-block-item -->
+                </div>
+                <!-- /.page-content__check__content-block -->
+                <div class="page-content__check__content-block">
+                  <div class="page-content__check__content-block-item">
+                    <div class="page-content__check__content-p">
+                      Сумма в валюте
+                    </div>
+                    <div class="page-content__check__content-p-data">{{ check.price|floatformat:"2g" }}{{ check.wellCheck }}</div>
+                  </div>
+                  <!-- /.page-content__check__content-block-item -->
+                  <div class="page-content__check__content-block-item">
+                    <div class="page-content__check__content-p">Курс счета</div>
+                    <div class="page-content__check__content-p-data">{{ check.well|floatformat:"2g" }}</div>
+                  </div>
+                  <!-- /.page-content__check__content-block-item -->
+                  <div class="page-content__check__content-block-item">
+                    <div class="page-content__check__content-p">За перевод</div>
+                    <div class="page-content__check__content-p-data">
+                      {% if check.commissionPercent and check.commissionRUB and check.commissionUSD %}
+                        {{check.commissionPercent}}% + {{check.commissionUSD}}$ + {{check.commissionRUB}}₽
+
+                      {% elif check.commissionPercent and check.commissionRUB %}
+                        {{check.commissionPercent}}% + {{check.commissionRUB}}₽
+
+                      {% elif check.commissionPercent and check.commissionUSD %}
+                        {{check.commissionPercent}}% + {{check.commissionUSD}}$ * {{check.wellCommissionUSD}}
+                      
+                      {% elif check.commissionPercent %}
+                        {{check.commissionPercent}}%
+
+                      {% elif check.commissionUSD %}
+                        {{check.commissionUSD}}$ * {{check.wellCommissionUSD}}
+
+                      {% elif check.commissionRUB %}
+                        {{check.commissionRUB}}₽
+
+                      {% endif %}
+                    </div>
+                  </div>
+                  <!-- /.page-content__check__content-block-item -->
+                </div>
+                <!-- /.page-content__check__content-block -->
+                <div class="page-content__check__content-block">
+                  <div class="page-content__check__content-block-item">
+                    <div class="page-content__check__content-p">Контракт оплаты</div>
+                    <div class="page-content__check__content-p-data">
+                      {{ check.ContractNumber}}
+                    </div>
+                  </div>
+                  <!-- /.page-content__check__content-block-item -->
+                  <div class="page-content__check__content-block-item">
+                    <div class="page-content__check__content-p">
+                      Статус оплаты
+                    </div>
+                    {% if check.status is False %}
+                    <div class="page-content__info-item-data negative">
+                        Не оплачен
+                    </div>
+                    {% else %}
+                    <div class="page-content__info-item-data item-green">
+                        Оплачен
+                    </div>
+                    {% endif %}
+                    </div>
+                  </div>
+                  <!-- /.page-content__check__content-block-item -->
+                </div>
+                <!-- /.page-content__check__content-block -->
+                <div class="page-content__check__content-block">
+                  <div class="page-content__check__content-product">
+                    <div class="page-content__check__content-p">Товар</div>
+                    <div class="page-content__check__content-p-product">
+                      {{ check.product }}
+                    </div>
+                  </div>
+                </div>
+                <!-- /.page-content__check__content-block -->
+            </div>
+            <!-- /.page-content__check -->
+
+            <div class="page-content-h">
+              <h3>История платежа</h3>
+            </div>
+
+            <div class="page-content__history">
+              <div class="page-content__history-items">
+
+                {% if operationsCount == 0 %}
+                  {% if user.is_superuser or user.group == "Финансы" %}
+                  <!-- Карта первого прихода -->
+                  <div class="page-content__history-card">
+                    <div class="symbol-new" title="Добавить поступление"></div>
+                  </div>
+                  <!-- /.page-content__history-card -->
+                  {% endif %}
+                {% else %}
+                {% for oper  in operations %}
+
+                {% if oper.name == "Поступление" %}
+
+                  <!-- Карта поступления средств -->
+                  <div class="page-content__history-card">
+                    <div class="card-admission__content">
+                      <div class="card-admission__content__head">
+                        <h3 class="card-admission__content__head-h">
+                          Поступление от Клиента
+                        </h3>
+                      </div>
+                      <div class="card-admission__content__body">
+                        <p class="card-purchase__content__body-p">
+                          Дата: {{ oper.date|date:"d.m.Y" }}
+                        </p>
+                      </div>
+                      <div class="card-admission__content__footer">
+                        <p class="card-admission__content__footer-p">
+                          Поступило: {{ oper.admissionRUB|floatformat:"2g" }}₽
+                        </p>
+                      </div>
+                      <div class="card-admission__content__files">
+                        <ul class="card-admission__content__files-items">
+                          <li class="card-admission__content__files-item">
+                            {% if oper.fileOperation %}
+                              <a href="{{ oper.fileOperation.url }}" class="file-name string">{{ oper.fileOperation }}</a>
+                            {% else %}
+                              Файла нет
+                            {% endif %}
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /.page-content__history-card -->
+                
+                {% elif oper.name == "Покупка" %}
+
+                  <!-- Карта покупки -->
+                  <div class="page-content__history-card">
+                    <div class="card-purchase__content">
+                      <div class="card-purchase__content__head">
+                        <h3 class="card-purchase__content__head-h">
+                          Покупка валюты
+                        </h3>
+                      </div>
+                      <div class="card-purchase__content__body">
+                        <p class="card-purchase__content__body-p">
+                          Дата: {{ oper.date|date:"d.m.Y" }}
+                        </p>
+                        <p class="card-purchase__content__body-p">
+                          Куплено: {{ oper.admissionCurrency|floatformat:"2g" }}{{oper.typeCurrency}}
+                        </p>
+                        <p class="card-purchase__content__body-p">Курс: {{ oper.well|floatformat:"4g" }}</p>
+                      </div>
+                      <div class="card-purchase__content__footer">
+                        <p class="card-purchase__content__footer-p">
+                          Затрачено: {{ oper.nursingRUB|floatformat:"2g" }}₽
+                        </p>
+                      </div>
+                      <div class="card-purchase__content__files">
+                        <ul class="card-purchase__content__files-items">
+                          <li class="card-purchase__content__files-item">
+                            {% if oper.fileOperation %}
+                              <a href="{{ oper.fileOperation.url }}" class="file-name string">{{ oper.fileOperation }}</a>
+                            {% else %}
+                              Файла нет
+                            {% endif %}
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /.page-content__history-card -->
+
+                {% elif oper.name == "Продажа" %}
+
+                  <!-- Карта продажи -->
+                  <div class="page-content__history-card">
+                    <div class="card-sale__content">
+                      <div class="card-sale__content__head">
+                        <h3 class="card-sale__content__head-h">Продажа валюты</h3>
+                      </div>
+                      <div class="card-sale__content__body">
+                        <p class="card-purchase__content__body-p">
+                          Дата: {{ oper.date|date:"d.m.Y" }}
+                        </p>
+                        <p class="card-sale__content__body-p">Продано: {{ oper.nursingCurrency|floatformat:"2g" }}{{ oper.typeCurrency }}</p>
+                        <p class="card-sale__content__body-p">Курс: {{ oper.well|floatformat:"4g" }}</p>
+                      </div>
+                      <div class="card-sale__content__footer">
+                        <p class="card-sale__content__footer-p">
+                          Поступило: {{ oper.admissionRUB|floatformat:"2g" }}₽
+                        </p>
+                      </div>
+                      <div class="card-sale__content__files">
+                        <ul class="card-sale__content__files-items">
+                          <li class="card-sale__content__files-item">
+                            {% if oper.fileOperation %}
+                              <a href="{{ oper.fileOperation.url }}" class="file-name string">{{ oper.fileOperation }}</a>
+                            {% else %}
+                              Файла нет
+                            {% endif %}
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /.page-content__history-card -->
+
+                {% elif oper.name == "Оплата" %}
+
+                  <!-- Карта оплаты -->
+                  <div class="page-content__history-card">
+                    <div class="card-payment__content">
+                      <div class="card-payment__content__head">
+                        <h3 class="card-payment__content__head-h">
+                          Оплата поставщику
+                        </h3>
+                      </div>
+                      <div class="card-payment__content__body">
+                        <p class="card-purchase__content__body-p">
+                          Дата: {{ oper.date|date:"d.m.Y" }}
+                        </p>
+                        <p class="card-payment__content__body-p">
+                          Отправлено: {{ oper.nursingCurrency|floatformat:"2g" }}{{ oper.typeCurrency }}
+                        </p>
+                        <p class="card-payment__content__body-p">
+                          Цена в Долл: {{ oper.priceInUSD|floatformat:"2g" }}$
+                        </p>
+                        <p class="card-payment__content__body-p">
+                          Комиссия: {% if check.commissionPercent and check.commissionRUB and check.commissionUSD %}
+                                      {{check.commissionPercent}}% + {{check.commissionUSD}}$ + {{check.commissionRUB}}₽
+
+                                    {% elif check.commissionPercent and check.commissionRUB %}
+                                      {{check.commissionPercent}}% + {{check.commissionRUB}}₽
+
+                                    {% elif check.commissionPercent and check.commissionUSD %}
+                                      {{check.commissionPercent}}% + {{check.commissionUSD}}$
+
+                                    {% elif check.commissionPercent %}
+                                      {{check.commissionPercent}}%
+
+                                    {% elif check.commissionUSD %}
+                                      {{check.commissionUSD}}$
+                                      
+                                    {% elif check.commissionRUB %}
+                                      {{check.commissionRUB}}₽
+                                    {% endif %}
+                        </p>
+                        <p class="card-payment__content__body-p">
+                          Курс комиссии: {{ oper.wellCommission|floatformat:"4g" }}
+                        </p>
+                      </div>
+                      <div class="card-payment__content__footer"></div>
+                      <div class="card-payment__content__files">
+                        <ul class="card-payment__content__files-items">
+                          <li class="card-payment__content__files-item">
+                            {% if oper.fileOperation %}
+                              <a href="{{ oper.fileOperation.url }}" class="file-name string">{{ oper.fileOperation }}</a>
+                            {% else %}
+                              Файла нет
+                            {% endif %}
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /.page-content__history-card -->
+                
+                {% elif oper.name == "Возврат" %}
+
+                  <!-- Карта возврата -->
+                  <div class="page-content__history-card">
+                    <div class="card-return-pay__content">
+                      <div class="card-return-pay__content__head">
+                        <h3 class="card-return-pay__content__head-h">
+                          Возврат платежа
+                        </h3>
+                      </div>
+                      <div class="card-return-pay__content__body">
+                        <p class="card-purchase__content__body-p">
+                          Дата: {{ oper.date|date:"d.m.Y" }}
+                        </p>
+                        <p class="card-return-pay__content__body-p">
+                          Поступило: {{ oper.admissionCurrency|floatformat:"2g" }}{{ oper.typeCurrency }}
+                        </p>
+                        <p class="card-return-pay__content__body-p">
+                          Сумма в USD: {{ oper.ReturnPriceUSD|floatformat:"2g" }}$
+                        </p>
+                      </div>
+                      <div class="card-return-pay__content__footer"></div>
+                      <div class="card-return-pay__content__files">
+                        <ul class="card-return-pay__content__files-items">
+                          <li class="card-return-pay__content__files-item">
+                            {% if oper.fileOperation %}
+                              <a href="{{ oper.fileOperation.url }}" class="file-name string">{{ oper.fileOperation }}</a>
+                            {% else %}
+                              Файла нет
+                            {% endif %}
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /.page-content__history-card -->
+
+                {% elif oper.name == "Письмо" %}
+
+                  <!-- Карта отправки письма в банк -->
+                  <div class="page-content__history-card">
+                    <div class="card-letter__content">
+                      <div class="card-letter__content__head">
+                        <h3 class="card-letter__content__head-h">
+                          Отправка письма
+                        </h3>
+                      </div>
+                      <div class="card-letter__content__body">
+                        <p class="card-purchase__content__body-p">
+                          Дата: {{ oper.date|date:"d.m.Y" }}
+                        </p>
+                        <p class="card-letter__content__body-p">
+                          {{ oper.typeLetter }}
+                        </p>
+                        <p class="card-letter__content__body-p">
+                          Стоимость услуги: {{ oper.nursingRUB|floatformat:"2g" }}₽
+                        </p>
+                      </div>
+                      <div class="card-letter__content__footer"></div>
+                      <div class="card-letter__content__files">
+                        <ul class="card-letter__content__files-items">
+                          <li class="card-letter__content__files-item">
+                            {% if oper.fileOperation %}
+                              <a href="{{ oper.fileOperation.url }}" class="file-name string">{{ oper.fileOperation }}</a>
+                            {% else %}
+                              Файла нет
+                            {% endif %}
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /.page-content__history-card -->
+
+                {% elif oper.name == "Провоз" %}
+
+                  <!-- Карта провоза груза-->
+                  <div class="page-content__history-card">
+                    <div class="card-delivery__content">
+                      <div class="card-delivery__content__head">
+                        <h3 class="card-delivery__content__head-h">
+                          Провоз груза
+                        </h3>
+                      </div>
+                      <div class="card-delivery__content__body">
+                        <p class="card-purchase__content__body-p">
+                          Дата: {{ oper.date|date:"d.m.Y" }}
+                        </p>
+                        <p class="card-delivery__content__body-p">
+                          Транспорт:
+                          <a href="#" class="card-delivery__content__body-a"
+                            >{{ oper.productToTransport_id.transport_id.name }}</a
+                          >
+                        </p>
+                        <p class="card-delivery__content__body-p">
+                          Пакинг:
+                          <a href="{% url 'item' oper.productToTransport_id.product_id.pk %}" class="card-delivery__content__body-a"
+                            >{{ oper.productToTransport_id.product_id.namePaking }}</a
+                          >
+                        </p>
+                        <p class="card-delivery__content__body-p"> {{ oper.productToTransport_id.weight}}кг, {{ oper.productToTransport_id.volume }}м&sup3;</p>
+                        <p class="card-delivery__content__body-p">Сумма по счету: {{ oper.productPriceToPaking|floatformat:"2g" }}{{ oper.productPriceToPakingCurrency }}</p>
+                      </div>
+                      <div class="card-delivery__content__footer">
+                        <p class="card-delivery__content__footer-p">
+                          Сумма подачи: {{ oper.productPriceInUSD|floatformat:"2g" }}{{ oper.productPriceInUSDCurrency }}
+                        </p>
+                      </div>
+                      <div class="card-delivery__content__files">
+                        <ul class="card-delivery__content__files-items">
+                          <li class="card-delivery__content__files-item">
+                            {% if oper.fileOperation %}
+                              <a href="{{ oper.fileOperation.url }}" class="file-name string">{{ oper.fileOperation }}</a>
+                            {% else %}
+                              Файла нет
+                            {% endif %}
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /.page-content__history-card -->
+                {% endif %}
+                {% endfor %}
+                {% if user.is_superuser or user.group == "Финансы" %}
+                <!-- Кнопки добавления карт -->
+                  <div class="page-content__history-btn">
+                    <div class="page-content__history-btn-left">
+                      <div
+                        class="btn-create btn-admission"
+                        title="Добавить поступление"
+                      ></div>
+                      <div
+                        class="btn-create btn-purchase"
+                        title="Купить валюту"
+                      ></div>
+                      <div
+                        class="btn-create btn-sale"
+                        title="Продать валюту"
+                      ></div>
+                    </div>
+                    <div class="page-content__history-btn-right">
+                      <div
+                        class="btn-create btn-payment"
+                        title="Отправить платеж"
+                      ></div>
+                      <div
+                        class="btn-create btn-return-pay"
+                        title="Возврат платежа"
+                      ></div>
+                      <div
+                        class="btn-create btn-letter"
+                        title="Отправка письма"
+                      ></div>
+                    </div>
+                  </div>
+                  {% endif %}
+                {% endif %}
+                
+                
+
+              </div>
+            </div>
+            <!-- /.page-content__history -->
+
+            <div class="page-content-h">
+              <h3>Валютный баланс</h3>
+            </div>
+
+            <div class="page-content__balance">
+              <div class="page-content__balance-items">
+                <div class="page-content__balance-item">
+                  <p class="page-content__balance-item-p">Остаток USD</p>
+                  <p class="page-content__balance-item-p">{{ summUSD|floatformat:"2g" }}$</p>
+                </div>
+                <div class="page-content__balance-item">
+                  <p class="page-content__balance-item-p">Остаток CNY</p>
+                  <p class="page-content__balance-item-p">{{ summCNY|floatformat:"2g" }}¥</p>
+                </div>
+                <div class="page-content__balance-item">
+                  <p class="page-content__balance-item-p">Остаток EUR</p>
+                  <p class="page-content__balance-item-p">{{ summEUR|floatformat:"2g" }}€</p>
+                </div>
+              </div>
+              <div class="page-content__balance-items">
+                <div class="page-content__balance-item">
+                  <p class="page-content__balance-item-p">Товара выкуплено</p>
+                  <p class="page-content__balance-item-p">{{ priceProduct|floatformat:"2g" }}</p>
+                </div>
+                <div class="page-content__balance-item">
+                  <p class="page-content__balance-item-p">Провезено товара</p>
+                  <p class="page-content__balance-item-p">{{ priceDelivery|floatformat:"2g" }}</p>
+                </div>
+                <div class="page-content__balance-item">
+                  <p class="page-content__balance-item-p">Осталось провезти</p>
+                  <p class="page-content__balance-item-p">{{ priceBalance|floatformat:"2g" }}</p>
+                </div>
+              </div>
+            </div>
+            <!-- /.page-content__balance -->
+
+            <div class="page-content-h">
+              <h3>Файловая корзина</h3>
+            </div>
+
+            
+            <div class="page-content__file">
+              {% if checkFile %}
+                {% for file in checkFile %}
+                <form 
+                  action="{% url 'payment' check.pk %}"
+                  method="post"
+                  class="page-content__file-item"
+                  enctype="multipart/form-data"
+                >
+                  {% csrf_token %}
+                  <input type="hidden" name="typeForm" value="DeleteFile">
+                  <div class="page-content__file-item-p p1">
+                    <input type="hidden" name="id" value="{{ file.id }}">
+                    <a target="__blank" href="{{ file.PathFile.url }}" class="page-content__file-item-a file-name"
+                      >{{ file.PathFile|frf }}</a
+                    >
+                  </div>
+                  <div class="page-content__file-item-p p2">Дата добавления: {{ file.createFile|date:"d.m.Y" }}</div>
+                  {% if user.is_superuser or user.group == "Финансы" %}
+                    <button class="file-btn-delete">Удалить</button>
+                  {% endif %}
+                </form>
+                <!-- /.page-content__file-item -->
+                {% endfor %}
+              {% else %}
+                <div class="no-file" >
+                  <p> Файлов нет </p>
+                </div>
+              {% endif %}
+              </div>
+            <!-- /.page-content__file -->
+          </div>
+          <!-- /.page-content -->
+        </div>
+      </div>
+      <!-- /.page -->
+    </div>
+    <!-- wrapper end -->
+{% endblock %}
+{% block popup %}
+    {% if user.is_superuser or user.group == "Финансы" %}
+    <!-- Попап поступления -->
+    <div class="popup-history popup-admission">
+      <div class="popup-history__content">     
+        <div class="popup-history__content-head">
+          <h4 class="popup-history__content-head-h">Поступление</h4>
+          <button
+            class="popup-history__content-head-btn btn__exit-admission"
+          ></button>
+        </div>
+        <form 
+          action="{% url 'payment' check.pk %}"
+          method="post"
+          class="popup-history__content-body"
+          enctype="multipart/form-data"
+        >
+          {% csrf_token %}
+          <input type="hidden" name="typeForm" value="newOper">
+          <input type="hidden" name="name" value="Поступление">
+          <input type="hidden" name="check_id" value="{{ check.pk }}">
+          {{ operationForm.date }}
+
+          {{ operationForm.admissionRUB }}
+          <label
+            for="popup-history__file-admission"
+            class="popup-history__btn-file string"
+            >Загрузить</label
+          >
+          <input type="file" name="fileOperation" id="popup-history__file-admission" class="popup-history__file">
+          <button class="popup-history__btn-save">Сохранить</button>
+        </form>
+      </div>
+    </div>
+    <!-- /.popup-history -->
+
+    <!-- Попап покупки -->
+    <div class="popup-history popup-purchase">
+      <div class="popup-history__content">
+        <div class="popup-history__content-head">
+          <h4 class="popup-history__content-head-h">Покупка валюты</h4>
+          <button
+            class="popup-history__content-head-btn btn__exit-purchase"
+          ></button>
+        </div>
+        <form
+          action="{% url 'payment' check.pk %}"
+          method="post"
+          class="popup-history__content-body"
+          enctype="multipart/form-data"
+        >
+          {% csrf_token %}
+          <input type="hidden" name="typeForm" value="newOper">
+          <input type="hidden" name="name" value="Покупка">
+          <input type="hidden" name="check_id" value="{{ check.pk }}">
+          {{ operationForm.date }}
+
+          {{ operationForm.admissionCurrency }}
+
+          {{ operationForm.typeCurrency }}
+          
+          {{ operationForm.well }}
+
+          {{ operationForm.nursingRUB }}
+
+          <label
+            for="popup-history__file-purchase"
+            class="popup-history__btn-file string"
+            >Загрузить</label
+          >
+          <input type="file" name="fileOperation" id="popup-history__file-purchase" class="popup-history__file">
+
+          <button class="popup-history__btn-save">Сохранить</button>
+        </form>
+      </div>
+    </div>
+    <!-- /.popup-history -->
+
+    <!-- Попап продажи -->
+    <div class="popup-history popup-sale">
+      <div class="popup-history__content">
+        <div class="popup-history__content-head">
+          <h4 class="popup-history__content-head-h">Продажа валюты</h4>
+          <button
+            class="popup-history__content-head-btn btn__exit-sale"
+          ></button>
+        </div>
+        <form
+          action="{% url 'payment' check.pk %}"
+          method="post"
+          class="popup-history__content-body"
+          enctype="multipart/form-data"
+        >
+          {% csrf_token %}
+          <input type="hidden" name="typeForm" value="newOper">
+          <input type="hidden" name="name" value="Продажа">
+          <input type="hidden" name="check_id" value="{{ check.pk }}">
+          {{ operationForm.date }}
+
+          {{ operationForm.nursingCurrency }}
+
+          {{ operationForm.typeCurrency }}
+          
+          {{ operationForm.well }}
+
+          {{ operationForm.admissionRUB }}
+
+          <label for="popup-history__file-sale" class="popup-history__btn-file string"
+            >Загрузить</label
+          >
+          <input type="file" name="fileOperation" id="popup-history__file-sale" class="popup-history__file">
+
+          <button class="popup-history__btn-save">Сохранить</button>
+        </form>
+      </div>
+    </div>
+    <!-- /.popup-history -->
+
+    <!-- Попап оплаты -->
+    <div class="popup-history popup-payment">
+      <div class="popup-history__content">
+        <div class="popup-history__content-head">
+          <h4 class="popup-history__content-head-h">Оплата поставщику</h4>
+          <button
+            class="popup-history__content-head-btn btn__exit-payment"
+          ></button>
+        </div>
+        <form
+          action="{% url 'payment' check.pk %}"
+          method="post"
+          class="popup-history__content-body"
+          enctype="multipart/form-data"
+        >
+          {% csrf_token %}
+          <input type="hidden" name="typeForm" value="newOper">
+          <input type="hidden" name="name" value="Оплата">
+          <input type="hidden" name="check_id" value="{{ check.pk }}">
+          {{ operationForm.date }}
+
+          {{ operationForm.nursingCurrency }}
+          {{ operationForm.typeCurrency }}
+
+          {{ operationForm.well }}
+
+          {{ operationForm.wellCommission }}
+
+          {{ operationForm.priceInUSD }}
+
+          <label
+            for="popup-history__file-payment"
+            class="popup-history__btn-file string"
+            >Загрузить</label
+          >
+          <input type="file" name="fileOperation" id="popup-history__file-payment" class="popup-history__file">
+          
+          <button class="popup-history__btn-save">Сохранить</button>
+        </form>
+      </div>
+    </div>
+    <!-- /.popup-history -->
+
+    <!-- Попап возврата -->
+    <div class="popup-history popup-return-pay">
+      <div class="popup-history__content">
+        <div class="popup-history__content-head">
+          <h4 class="popup-history__content-head-h">Возврат</h4>
+          <button
+            class="popup-history__content-head-btn btn__exit-return-pay"
+          ></button>
+        </div>
+        <form
+          action="{% url 'payment' check.pk %}"
+          method="post"
+          class="popup-history__content-body"
+          enctype="multipart/form-data"
+        >
+          {% csrf_token %}
+          <input type="hidden" name="typeForm" value="newOper">
+          <input type="hidden" name="name" value="Возврат">
+          <input type="hidden" name="check_id" value="{{ check.pk }}">
+          {{ operationForm.date }}
+
+          {{ operationForm.admissionCurrency }}
+          {{ operationForm.typeCurrency }}
+          {{ operationForm.ReturnPriceUSD }}
+
+          <label
+            for="popup-history__file-return-pay"
+            class="popup-history__btn-file string"
+            >Загрузить</label
+          >
+          <input type="file" name="fileOperation" id="popup-history__file-return-pay" class="popup-history__file">
+          
+          <button class="popup-history__btn-save">Сохранить</button>
+        </form>
+      </div>
+    </div>
+    <!-- /.popup-history -->
+
+    <!-- Попап отправки письма -->
+    <div class="popup-history popup-letter">
+      <div class="popup-history__content">
+        <div class="popup-history__content-head">
+          <h4 class="popup-history__content-head-h">Отправка письма</h4>
+          <button
+            class="popup-history__content-head-btn btn__exit-letter"
+          ></button>
+        </div>
+        <form
+          action="{% url 'payment' check.pk %}"
+          method="post"
+          class="popup-history__content-body"
+          enctype="multipart/form-data"
+        >
+          {% csrf_token %}
+          <input type="hidden" name="typeForm" value="newOper">
+          <input type="hidden" name="name" value="Письмо">
+          <input type="hidden" name="check_id" value="{{ check.pk }}">
+          {{ operationForm.date }}
+
+          {{ operationForm.typeLetter }}
+
+          {{ operationForm.nursingRUB }}
+          <label
+            for="popup-history__file-letter"
+            class="popup-history__btn-file string"
+            >Загрузить</label
+          >
+          <input type="file" name="fileOperation" id="popup-history__file-letter" class="popup-history__file">
+          
+          <button class="popup-history__btn-save">Сохранить</button>
+        </form>
+      </div>
+    </div>
+    <!-- /.popup-history -->
+
+    <!-- Попап изменения платежа -->
+    <div class="popup__check">
+      <form
+        action="{% url 'payment' check.pk %}"
+        method="post"
+        class="popup__check-content"
+        enctype="multipart/form-data"
+      >
+      {% csrf_token %}
+        <input type="hidden" name="typeForm" value="newCheck">
+        <div class="popup__check-header">
+          <h3 class="popup__check-header-h">Изменить счет</h3>
+        </div>
+        <div class="popup__check-body">
+          <input type="hidden" name="client" value={{ check.client.pk }}>
+          {% if check.appeal_id %}
+            <input type="hidden" name="appeal" value={{ check.appeal_id }}>
+          {% endif %}
+          <div class="popup__check-block">
+            <div class="popup__check-block-item">
+              <div class="popup__check-block-item-p">Дата</div>
+              {{ checkForm.date }}
+            </div>
+            <!-- /.popup__check-block-item -->
+
+            <div class="popup__check-block-item">
+              <div class="popup__check-block-item-p">Тип платежа</div>
+              {{ checkForm.currency }}
+            </div>
+            <!-- /.popup__check-block-item -->
+
+            <div class="popup__check-block-item">
+              <div class="popup__check-block-item-p">Статус оплаты</div>
+              {{ checkForm.status }}
+            </div>
+            <!-- /.popup__check-block-item -->
+          </div>
+          <!-- /.popup__check-block -->
+
+          <div class="popup__check-block">
+            <!-- /.popup__check-block-item -->
+            <div class="popup__check-block-item">
+              <div class="popup__check-block-item-p">Курс</div>
+              {{ checkForm.well }}
+            </div>
+            <div class="popup__check-block-item">
+              <div class="popup__check-block-item-p">Курс за перевод</div>
+              {{ checkForm.wellCommissionUSD }}
+            </div>
+            <!-- /.popup__check-block-item -->
+            <!-- /.popup__check-block-item -->
+            <div class="popup__check-block-item">
+              <div class="popup__check-block-item-p">За перевод</div>
+              <select
+                name=""
+                id=""
+                class="popup__check-block-item-p-data popup__select-data"
+              >
+                <option selected="selected">%</option>
+                <option>$</option>
+                <option>₽</option>
+                <option>% + $</option>
+                <option>% + ₽</option>
+                <option>$ + ₽</option>
+                <option>% + $ + ₽</option>
+              </select>
+            </div>
+            <!-- /.popup__check-block-item -->
+          </div>
+          <!-- /.popup__check-block -->
+
+          <div class="popup__check-block">
+            <div class="popup__check-block-item input-none inputOne input-active">
+              <div class="popup__check-block-item-p">% за перевод</div>
+              {{ checkForm.commissionPercent }}
+            </div>
+            <!-- /.popup__check-block-item -->
+            <div class="popup__check-block-item input-none inputTwo">
+              <div class="popup__check-block-item-p">$ за перевод</div>
+              {{ checkForm.commissionUSD }}
+            </div>
+            <!-- /.popup__check-block-item -->
+            <div class="popup__check-block-item input-none inputThree">
+              <div class="popup__check-block-item-p">₽ за перевод</div>
+              {{ checkForm.commissionRUB }}
+            </div>
+            <!-- /.popup__check-block-item -->
+          </div>
+
+          <div class="popup__check-block">
+
+            <div class="popup__check-block-item">
+              <div class="popup__check-block-item-p">Стоимость</div>
+              {{ checkForm.price }}
+            </div>
+            <!-- /.popup__check-block-item -->
+
+            <div class="popup__check-block-item">
+              <div class="popup__check-block-item-p">Валюта инвойса</div>
+              {{ checkForm.wellCheck }}
+            </div>
+            <!-- /.popup__check-block-item -->
+
+            <div class="popup__check-block-item">
+              <div class="popup__check-block-item-p">Номер контракта</div>
+              {{ checkForm.ContractNumber }}
+
+              <datalist id="ContractNumber">
+                <option value="YY-2018"></option>
+              </datalist>
+            </div>
+            <!-- /.popup__check-block-item -->
+          </div>
+          <!-- /.popup__check-block -->
+
+          <div class="popup__check-block">
+            <div class="popup__check__content-product">
+              <div class="popup__check__content-p">Товар</div>
+              {{ checkForm.product }}
+            </div>
+          </div>
+          <!-- /.popup__check-block -->
+        </div>
+
+        <div class="popup__check-file">
+          <!-- file block start -->
+            {{ checkFiles.PathFile }}
+            <input type="hidden" name="check_id" id="id_check_id" value={{ check.pk }}>
+        </div>
+        <!-- /.popup__check-file -->
+        <div class="popup__check-btn">
+          <button class="popup__check__btn-save">Сохранить</button>
+          <div class="popup__check__btn-exit">Закрыть</div>
+        </div>
+      </form>
+    </div>
+    <!-- /.popup__check -->
+    {% endif %}
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'finance-page/js/financePage.js' %}"></script>
+    <script src="{% static 'client-page/js/open.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,395 @@
+/* START */
+.tables {
+  width: 100%;
+  height: 800px;
+  border-radius: 20px;
+  background-color: #78a1bb;
+  box-shadow: 4px 6px 5px #cecece;
+  margin-top: 10px;
+  padding: 10px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tables-right {
+  width: 80%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.table-head {
+  width: 95%;
+  height: 5%;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.table-head__block {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.search-btn {
+  cursor: pointer;
+  outline: none;
+  font-size: 0.8rem;
+  height: 20px;
+  width: 80px;
+  border: 1px solid #78a1bb;
+  border-radius: 10px;
+  background-color: #fff;
+  transition: all 0.8s;
+}
+
+.search-btn:hover {
+  background-color: #78a1bb;
+  border-color: #fff;
+}
+
+.tables-left {
+  width: 20%;
+  height: 100%;
+  margin-top: 110px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+}
+
+.finance-balance {
+  margin-top: 25px;
+  width: 100%;
+  height: 40px;
+}
+
+.finance-balance__link {
+  width: 100%;
+  height: 40px;
+  background: yellow;
+  font-size: 1rem;
+  font-weight: 700;
+  border: 1px solid black;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  transition: all 1.2s;
+}
+
+.finance-balance__link:hover {
+  background: #000;
+  border-color: #fff;
+  color: #fff;
+}
+
+.filter-content {
+  background: linear-gradient(to top left, #b4b4b4, rgb(255, 255, 255));
+  border-radius: 20px;
+  width: 90%;
+  height: 350px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.filter-btn {
+  width: 120px;
+  padding: 2px 0;
+  background-color: #78a1bb;
+  border-radius: 10px;
+  cursor: pointer;
+  color: #fff;
+  text-align: center;
+  border: 1px solid #cecece;
+}
+
+.filter-btn:hover {
+  background-color: #fff;
+  color: #000;
+}
+
+.filter-btn-active {
+  background-color: #fff;
+  color: #000;
+}
+
+.tables-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.tables-table {
+  width: 95%;
+  height: 90%;
+  border: 1px solid #cecece;
+  border-radius: 20px;
+  overflow-y: scroll;
+
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+}
+
+.tables-table::-webkit-scrollbar {
+  width: 0;
+}
+
+.tables-bottom {
+  width: 95%;
+  height: 2%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+}
+
+.tables-bottom-pag {
+  display: flex;
+}
+
+.table-span {
+  font-weight: 700;
+}
+
+/* TABLE ITEM START */
+.table-item {
+  width: 100%;
+  height: 80px;
+  background: linear-gradient(to top left, #b4b4b4, rgb(255, 255, 255));
+  cursor: pointer;
+  transition: all 0.8s;
+  margin-bottom: 3px;
+  padding: 0 15px;
+  border-radius: 0;
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.table-item:first-child {
+  border-top: none;
+}
+
+.table-item-top {
+  width: 100%;
+  height: 30px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #cecece;
+}
+
+.table-item-bottom {
+  width: 100%;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.table-item-top__block {
+  width: 33.3333%;
+  height: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.table-item-top__block:not(:first-child) {
+  border-left: 1px solid #cecece;
+}
+
+.table-p {
+  font-size: 0.8rem;
+}
+
+.table-item:hover {
+  background: #568fb3;
+}
+
+.block-head-deactive {
+  display: none;
+}
+
+.block-head__little-table {
+  width: 50%;
+}
+
+.table-item-active {
+  background: linear-gradient( to top left, rgba(251, 255, 2, 0.4), rgba(211, 214, 2, 0.849) );;
+}
+/* TABLE ITEM END */
+/* END */
+
+.table-btn {
+  cursor: pointer;
+  padding: 2px 6px;
+  font-size: 0.85rem;
+  color: #000;
+  outline: none;
+  border: 1px solid #cecece;
+  border-radius: 10px;
+  background-color: #cecece;
+  transition: all 0.8s;
+}
+
+.table-input {
+  width: 200px;
+  height: 20px;
+  border-radius: 20px;
+  outline: none;
+  padding-left: 5px;
+  font-size: 0.8rem;
+  border: 1px solid #cecece;
+  cursor: text;
+  margin-right: 10px;
+}
+
+.table-btn:hover {
+  background-color: transparent;
+}
+
+.table-select {
+  width: 140px;
+  height: 20px;
+  border-radius: 20px;
+  outline: none;
+  padding-left: 5px;
+  font-size: 0.8rem;
+  border: 1px solid #cecece;
+  cursor: text;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.tables-h {
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-shadow: 4px 6px 5px #cecece;
+  margin-left: 20px;
+}
+
+/* PAGINATION START */
+.pagination {
+  font-size: 1rem;
+  font-weight: 700;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 18px;
+}
+
+.pagination-list {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.pagination-li {
+  cursor: pointer;
+  padding: 0 2px;
+  margin: 0 3px;
+  user-select: none;
+}
+
+.pagination-li__active {
+  color: #fff;
+}
+
+.pag-client-deactive {
+  display: none;
+}
+/* PAGINATION END */
+
+@media screen and (max-width: 1000px) {
+  .tables {
+    flex-direction: column;
+    height: 1400px;
+  }
+
+  .tables-right {
+    width: 80%;
+  }
+
+  .tables-left {
+    width: 80%;
+    margin-top: 20px;
+
+    justify-content: space-between;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+  }
+
+  .tables-left-table {
+    height: 48%;
+  }
+
+  .table-head {
+    height: 10%;
+  }
+
+  .tables-table {
+    height: 85%;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .container {
+    padding: 5px;
+  }
+
+  .table-head {
+    flex-direction: column;
+  }
+
+  .table-input {
+    width: 140px;
+  }
+
+  .tables-name {
+    margin-bottom: 5px;
+  }
+
+  .table-p {
+    font-size: 0.7rem;
+  }
+
+  .tables-h {
+    text-align: center;
+    margin: 0;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .tables-right {
+    width: 95%;
+  }
+
+  .tables-left {
+    width: 95%;
+  }
+}

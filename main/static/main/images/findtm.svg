@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="96.591789"
+   height="119.35546"
+   viewBox="0 0 96.591794 119.35547"
+   id="svg3372"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="Latin_letter_open_E.svg">
+  <defs
+     id="defs3374" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2"
+     inkscape:cx="-1.0394999"
+     inkscape:cy="36.456928"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer3"
+     showgrid="false"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:snap-intersection-paths="true"
+     inkscape:object-nodes="true"
+     units="px"
+     inkscape:snap-to-guides="true"
+     inkscape:window-width="1400"
+     inkscape:window-height="1003"
+     inkscape:window-x="-4"
+     inkscape:window-y="-4"
+     inkscape:window-maximized="1"
+     inkscape:snap-bbox="false"
+     inkscape:object-paths="false"
+     inkscape:snap-center="true"
+     inkscape:snap-object-midpoints="false"
+     inkscape:snap-text-baseline="true"
+     inkscape:showpageshadow="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4557"
+       empspacing="5"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true"
+       originx="-176.13282px"
+       originy="-89.999992px" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata3377">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="Text letter"
+     style="display:inline"
+     transform="translate(-176.13283,-90.644548)">
+    <g
+       style="font-size:80px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:-70px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:sans-serif"
+       id="text4661">
+      <path
+         d="m 272.72462,121.58205 -4.48242,0 c -0.70322,-8.26163 -2.08017,-13.76943 -4.13086,-16.52344 -1.87508,-2.46083 -4.70223,-4.33583 -8.48144,-5.625001 -3.77938,-1.288951 -8.51082,-1.933481 -14.19434,-1.933594 l -25.57617,0 c -1.05473,1.13e-4 -1.96293,0.07335 -2.72461,0.219727 -0.76176,0.146596 -1.2891,0.366323 -1.58203,0.65918 -0.52738,0.351673 -0.92289,1.010852 -1.18652,1.977538 -0.26371,0.96691 -0.39555,2.12413 -0.39551,3.47168 l 0,41.39648 31.46484,0 0,10.81055 -31.46484,0 0,34.54102 c -4e-5,6.21095 1.05465,10.28321 3.16406,12.21679 1.17184,1.28907 2.915,2.21192 5.22949,2.76856 2.31441,0.55664 5.20015,0.89356 8.65723,1.01074 l 0,3.42774 -50.36133,0 0,-3.42774 c 3.63281,-0.17578 6.5332,-0.60058 8.70117,-1.27441 2.16796,-0.67383 3.69139,-1.56738 4.57032,-2.68067 1.23045,-1.46483 1.84568,-5.4785 1.8457,-12.04101 l 0,-34.54102 -15.64453,0 0,-10.81055 15.64453,0 0,-34.98046 c -2e-5,-3.33974 -0.30764,-6.1083 -0.92285,-8.30567 -0.61525,-2.197154 -1.50881,-3.793832 -2.68067,-4.790037 -0.93751,-0.703012 -2.3877,-1.318245 -4.35058,-1.845703 -1.9629,-0.527229 -4.52637,-0.937385 -7.69043,-1.230469 l 0,-3.427734 96.59179,0 z"
+         style="font-size:180px;font-variant:normal;font-stretch:normal;font-family:Universalia;-inkscape-font-specification:Universalia"
+         id="path3048" />
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,69 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% block csslink%}
+    <link rel="stylesheet" href="{% static 'payment/css/finance.css' %}" />
+{% endblock %}
+
+{% block content %}  
+      <div class="page">
+        <div class="container">
+          <p class="tables-h">Оплаты за товар</p>
+          <div class="tables">
+            <div class="tables-right">
+              <div class="table-head">
+                <p class="tables-name">Оплаты</p>
+                <div class="table-head__block">
+                  <select class="table-select">
+                    <option value="Код клиента">Код клиента</option>
+                    <option value="Товар">Товар</option>
+                    <option value="Сумма в валюте">Сумма в валюте</option>
+                  </select>
+                  <input type="search" class="table-input filter-input" placeholder="Фильтрация"/>
+                  <input type="search" class="table-input contractNumber" placeholder="Номер контракта"/>
+                  <button class="search-btn">Поиск</button>
+                </div>
+              </div>
+              <!-- /.table-head -->
+
+              <div class="tables-table">
+                
+              </div>
+
+              <div class="tables-bottom">
+                <ul class="tables-bottom-pag"></ul>
+              </div>
+              <!-- /.tables-bottom -->
+            </div>
+            <!-- /.tables-right -->
+            <div class="tables-left">
+              <div class="filter-content">
+                  <div class="filter-btn filter-btn-active">Все</div>
+                  <div class="filter-btn">Новые</div>
+                  <div class="filter-btn">В работе</div>
+                  <div class="filter-btn">Долл</div>
+                  <div class="filter-btn">Юа</div>
+                  <div class="filter-btn">Евро</div>
+                  <div class="filter-btn">Нал.юа</div>
+                  <div class="filter-btn">Фапьяо юа</div>
+              </div>
+
+              <div class="finance-balance">
+                <a href="{% url 'balance' %}" class="finance-balance__link">Баланс &rarr;</a>
+              </div>
+            </div>
+            <!-- /.tables-left -->
+          </div>
+          <!-- /.tables -->
+        </div>
+      </div>
+      <!-- /.page -->
+    </div>
+    <!-- wrapper end -->
+{% endblock %}
+{% block popup %}
+    
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'payment/js/finance.js' %}"></script>
+    <script src="{% static 'client-page/js/open.js' %}"></script>
+{% endblock %}

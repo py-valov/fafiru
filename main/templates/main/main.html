@@ -1,0 +1,251 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% block csslink%}
+<link rel="stylesheet" href="{% static 'main/css/main.css' %} " />
+{% endblock %}
+
+{% block btncreate %}
+  {% if user.is_superuser or user.group != "Обычный" %}
+  <button class="headers__menu-btn popup-news__open">
+    Добавить новость
+  </button>
+  
+  <button class="headers__menu-btn popup_open">
+    Добавить контрагента
+  </button>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+      <div class="main-content">
+        <div class="container">
+          <div class="main-content__column-head">
+            <div class="main-content__column-head__content">
+              <img
+                class="main-content__column-head__content-img media_disnone"
+                src="{% static 'main/images/content-head/hello.svg' %}"
+                alt="hello"
+              />
+              <img
+                class="main-content__column-head__content-img media_disnone"
+                src="{% static 'main/images/content-head/hi.svg' %}"
+                alt="hi"
+              />
+              <img
+                class="main-content__column-head__content-img"
+                src="{% static 'main/images/content-head/ok.svg' %}"
+                alt="ok"
+              />
+              <img
+                class="main-content__column-head__content-img"
+                src="{% static 'main/images/content-head/thank.svg' %}"
+                alt="thank"
+              />
+              <img
+                class="main-content__column-head__content-img"
+                src="{% static 'main/images/content-head/bye.svg' %}"
+                alt="bye"
+              />
+            </div>
+            <!-- /.main-content__column-head -->
+          </div>
+          <div class="main-content__column-body">
+            <div class="main-content__column-body-table card-news">
+              <div class="main-content__column-body-table__head">
+                <h3 class="main-content__column-body-table__head-h">Новости &#128240;</h3>
+              </div>
+              <!-- /.main-content__column-body-table__head -->
+              <div class="main-content__column-body-table__search">
+                <div class="pagination">
+                  <ul class="pagination-list pag-list-news">
+                  </ul>
+                </div>
+                <input
+                  type="search"
+                  class="main-content__column-body-table__search-input search-input__news"
+                  placeholder="Фильтрация"
+                />
+              </div>
+              <!-- /.main-content__column-body-table__search -->
+
+              <div class="main-content__column-body-table-body pag-news-body">
+                
+              </div>
+              <!-- /.main-content__column-body-table-body -->
+              <div class="main-content__column-body-table-footer">
+                <div class="line"></div>
+              </div>
+              <!-- /.main-content__column-body-table-footer -->
+            </div>
+            <!-- /.main-content__column-body-table -->
+            <div class="main-content__column-body-table card-contragent">
+              <div class="main-content__column-body-table__head">
+                <h3 class="main-content__column-body-table__head-h">Контрагенты &#129485;</h3>
+              </div>
+              <!-- /.main-content__column-body-table__head -->
+              <div class="main-content__column-body-table__search">
+                <div class="pagination">
+                  <ul class="pagination-list pag-list-client">
+                </div>
+                <input
+                  type="search"
+                  class="main-content__column-body-table__search-input search-input__client"
+                  placeholder="Фильтрация"
+                />
+              </div>
+              <!-- /.main-content__column-body-table__search -->
+
+              <div
+                class="main-content__column-body-table-body pag-client-body"
+              ></div>
+              <!-- /.main-content__column-body-table-body -->
+              <div class="main-content__column-body-table-footer">
+                <div class="line"></div>
+              </div>
+              <!-- /.main-content__column-body-table-footer -->
+            </div>
+            <!-- /.main-content__column-body-table -->
+          </div>
+          <!-- /.main-content__column-body -->
+          <div class="main-content__column-footer">
+            <div class="main-content__column-footer-table">
+              <div class="main-content__column-footer-table__head">
+                <h3 class="main-content__column-footer-table__head-h">
+                  Счета в работе &#63754;
+                </h3>
+              </div>
+
+              <div class="main-content__column-footer-table-search">
+                <input
+                  type="search"
+                  class="main-content__column-body-table__search-input search-input__payment"
+                  placeholder="Фильтрация"
+                />
+              </div>
+              <!-- /.main-content__column-footer-table-search -->
+
+              <div class="main-content__column-footer-table-body">
+
+                <div class="main-content__column-footer-table-body-currency">
+                  <div class="column-footer-table-body-currency-card-btn currency-card-active">
+                    <p class="column-footer-table-body-currency-card-name">Юа</p>
+                  </div>
+                  <!-- /.column-footer-table-body-currency-card -->
+                  <div class="column-footer-table-body-currency-card-btn">
+                    <p class="column-footer-table-body-currency-card-name">Долл</p>
+                  </div>
+                  <!-- /.column-footer-table-body-currency-card -->
+                  <div class="column-footer-table-body-currency-card-btn">
+                    <p class="column-footer-table-body-currency-card-name">Евро</p>
+                  </div>
+                  <!-- /.column-footer-table-body-currency-card -->
+                  <div class="column-footer-table-body-currency-card-btn">
+                    <p class="column-footer-table-body-currency-card-name">Не оплачен клиентом</p>
+                  </div>
+                  <!-- /.column-footer-table-body-currency-card -->
+                </div>
+                <!-- /.main-content__column-footer-table-body-currency -->
+
+                <div class="main-content__column-footer-table-body-card">
+                  
+                </div>
+                <!-- /.main-content__column-footer-table-body-card -->
+              </div>
+              <!-- /.main-content__column-footer-table-body -->
+              <div class="main-content__column-footer-table-footer">
+                <div class="line"></div>
+              </div>
+              <!-- /.main-content__column-footer-table-footer -->
+            </div>
+            <!-- /.main-content__column-footer-table -->
+          </div>
+          <!-- /.main-content__column-footer -->
+        </div>
+      </div>
+
+    {% endblock %}
+    {% block popup %}
+    {% if user.is_superuser or user.group != "Обычный" %}
+    <div class="popup-create">
+      <div class="popup-wrapper">
+        <div class="popup-container">
+          <form class="popup-content" action="{% url 'home' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="typeForm" value="newClient">
+            <div class="popup-content__head">
+              <h3 class="popup-content__head-h">Добавить контрагента</h3>
+              <button class="popup-content__head-btn">Сохранить</button>
+              <div class="popup-content__head-btn exit_btn">Закрыть</div>
+            </div>
+            <div class="popup-content__body">
+              <div class="popup-content__body-item">
+                <label class="popup-content__body-label">Код клиента</label>
+                {{ formClient.kod }}
+              </div>
+              <div class="popup-content__body-item">
+                <label class="popup-content__body-label">Юр.лицо</label>
+                {{ formClient.name }}
+              </div>
+              <div class="popup-content__body-item popup-item-product">
+                <label class="popup-content__body-label">Товар</label>
+                {{ formClient.product }}
+              </div>
+              <div class="popup-content__body-item">
+                <label class="popup-content__body-label">Тип договора</label>
+                {{ formClient.contract }}
+              </div>
+              <div class="popup-content__body-item">
+                <label class="popup-content__body-label">Агент</label>
+                {{ formClient.agent }}
+              </div>
+              <div class="popup-content__body-item">
+                <label class="popup-content__body-label">Email</label>
+                {{ formClient.email }}
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="popup-news-create">
+      <div class="popup-wrapper">
+        <div class="popup-container">
+          <form class="popup-content" action="{% url 'home' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="typeForm" value="newNews">
+            <div class="popup-content__head">
+              <h3 class="popup-content__head-h">Добавить новость</h3>
+              <button class="popup-content__head-btn btn-add-new">Сохранить</button>
+              <div class="popup-content__head-btn exit-news__btn">Закрыть</div>
+            </div>
+            <div class="popup-content__body">
+              <div class="popup-content__body-item">
+                <label class="popup-content__body-label">Категория</label>
+                {{ formNews.category }}
+              </div>
+              <div class="popup-content__body-item">
+                <label class="popup-content__body-label">Дата новости</label>
+                {{ formNews.date }}
+              </div>
+              <div class="popup-content__body-item popup-item-product">
+                <label class="popup-content__body-label"
+                  >Описание новости</label
+                >
+                {{ formNews.content }}
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- /.popup-creaate -->
+    {% endif %}
+    {% endblock %}
+    {% block scripts %}
+    <script src="{% static 'main/js/open.js' %} "></script>
+    
+    <script src="{% static 'main/js/main.js' %}"></script>
+    <script src="{% static 'main/js/border.js' %}"></script>
+    {% endblock %}
+

@@ -1,0 +1,465 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load payment_tags %}
+{% block csslink%}
+<link rel="stylesheet" href="{% static 'product-page/css/product-page.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page">
+  <div class="container">
+    <div class="item-head">
+      <div class="content-card">
+        <div class="content-card-head">
+          <p class="content-card-head-p">{{ productItem.date|date:"d.m.Y" }}</p>
+          <a href="{% url 'client' productItem.client_id.pk %}" class="content-card-head-p p-href" title="{{ productItem.client_id.kod }} - {{ productItem.client_id.name }} | {{ productItem.client_id.contract }}">&#10002; {{ productItem.namePaking }}</a>
+        </div>
+
+        <div class="content-card-body">
+          <p class="content-card-body-p">
+            <span class="content-card-body-title">Вес:</span>
+            <span> {{ productItem.weight|floatformat:"2g" }}кг</span>
+          </p>
+          <p class="content-card-body-p">
+            <span class="content-card-body-title">Объем:</span>
+            <span> {{ productItem.volume|floatformat:"2g" }}м&sup3;</span>
+          </p>
+          <p class="content-card-body-p">
+            <span class="content-card-body-title">Контракт:</span>
+            <span class="name"> {{ productItem.ContractNumber }}</span>
+          </p>
+          <p class="content-card-body-p">
+            <span class="content-card-body-title">Цена:</span>
+            <span class="name"> {{ productItem.price|floatformat:"2g" }}{{ productItem.currency }}</span>
+          </p>
+          <p class="content-card-body-p">
+            <span class="content-card-body-title">Транспорт:</span>
+            <span> {{ productItem.transport }}</span>
+          </p>
+          <p class="content-card-body-p">
+            <span class="content-card-body-title">Статус:</span>
+            <span class="name"> {{ productItem.status }}</span>
+          </p>
+        </div>
+
+        <div class="content-card-product">
+          <textarea class="content-card-product-text">{{ productItem.nameProduct }}</textarea>
+        </div>
+
+        <div class="content-card-btns">
+          <a href="{% url 'product' %}" class="content-card-btn_prev">&#8617; на склад</a>
+          {% if productItem.appeal_id %}
+            <a href="{% url 'appeal' productItem.appeal_id %}" class="page-content__check__block-info-a-yellow">Перейти в задачу</a>
+          {% else %}
+          <form class="page-content__check__block-info-form" action="{% url 'item' productItem.pk %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="type" value="newAppealProduct">
+
+            <input type="hidden" name="date" value="{{ today.day }}.{{ today.month }}.{{ today.year }}">
+            <input type="hidden" name="category" value="Склад">
+            <input type="hidden" name="content" value="Пакинг: {{ productItem.namePaking }}, товар: {{ productItem.nameProduct }}, по контракту {{ productItem.ContractNumber }}, планируемый способ доставки: {{ productItem.transport }}">
+            <input type="hidden" name="client" value={{ productItem.client_id.pk }}>
+            <input type="hidden" name="user_create" id="id_user_create" value="{{ user.pk }}">
+
+            <button class="page-content__check__block-info-a">Создать задачу</button>
+          </form>
+          {% endif %}
+          <div class="content-card-btn">&#9998;</div>
+        </div>
+
+        <div class="content-card-info">
+          <div class="content-card-info__name">
+            <p class="content-card-info__name-p">Остатки на складе</p>
+          </div>
+
+          <div class="content-card-info__block">
+            <div class="content-card-info__block-item">
+              <span class="content-card-body-title">Вес:</span>
+              <span>{{ productItem.weightBalance|floatformat:"2g" }}кг</span>
+            </div>
+            <div class="content-card-info__block-item">
+              <span class="content-card-body-title">Объем:</span>
+              <span>{{ productItem.volumeBalance|floatformat:"2g" }}м³</span>
+            </div>
+            <div class="content-card-info__block-item">
+              <span class="content-card-body-title">Стоимость:</span>
+              <span>{{ productItem.priceBalance|floatformat:"2g" }}{{ productItem.currency }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /.content-card --> 
+
+      <div class="item-head__addition">
+          <div class="item-head__file">
+            <p class="item-head-file-title">Файловая корзина</p>
+            <div class="item-head__file-content">
+              {% if fileItems %}
+              {% for file in fileItems %}
+              <form 
+              action="{% url 'item' productItem.pk %}"
+              method="post"
+              class="item-head__file-item"
+              enctype="multipart/form-data"
+              >
+              {% csrf_token %}
+                <input type="hidden" name="type" value="DeleteFile">
+                <input type="hidden" name="file_id" value="{{ file.id }}">
+                <a href="{{ file.file.url }}" class="item-head__file-item__name" target="__blank">{{ file.file|frf24 }}</a>
+                <p class="item-head__file-item__date">{{ file.date_create|date:"d.m.Y" }}</p>
+                <button class="file-btn-delete">Удалить</button>
+              </form>
+              {% endfor %}
+              {% else %}
+                <div class="no-file" >
+                  <p> Файлов нет </p>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+          <!-- /.item-head__file -->
+          <form 
+          action="{% url 'item' productItem.id %}"
+          method="post"
+          class="item-head__comment"
+          >
+            {% csrf_token %}
+            <input type="hidden" name="type" value="newComment">
+            <div class="item-head__info">
+              <p class="item-head-title">Примечание &#9993;</p>
+              <button class="comment-btn" title="Схранить">&#10004;</button>
+            </div>
+            
+            <div class="item-head__comment-content">
+              <input type="hidden" name="product_id" value={{ productItem.pk }}>
+              {{ commentForm.comment }}
+            </div>
+          </form>
+          <!-- /.item-head__comment -->
+      </div>
+      <!-- /.item-head__file -->
+    </div>
+    <!-- /.item-head -->
+
+    <div class="item-transportation">
+      <!-- /.product__transport-info -->
+        <div class="transport-panel">
+          <h2 class="product__transport-h">Провозы товара &#9951;</h2>
+          <button class="transport-btn" >Отгрузить</button>
+        </div>
+        
+        <div class="product__transport-cards">
+
+          {% for oper in operation %}
+          <div class="transport-card">
+            <div class="transport-card-h">
+              {{ oper.productToTransport_id.transport_id.name }} - {{ oper.date|date:"d.m.Y" }}г - Контракт платежа: {{ oper.check_id.ContractNumber }}
+            </div>
+            <div class="transport-card-info">
+              <div class="transport-card-info__item">
+                <div class="transport-card-info__item-title">Вес</div>
+                <div class="transport-card-info__item-data number-pass">
+                  {{ oper.productToTransport_id.weight}}кг
+                </div>
+              </div>
+              <!-- /.transport-card-info__item -->
+
+              <div class="transport-card-info__item">
+                <div class="transport-card-info__item-title">Объем</div>
+                <div class="transport-card-info__item-data number-pass">
+                  {{ oper.productToTransport_id.volume }}м&sup3;
+                </div>
+              </div>
+              <!-- /.transport-card-info__item -->
+
+              <div class="transport-card-info__item">
+                <div class="transport-card-info__item-title">
+                  Стоимость по счету
+                </div>
+                <div class="transport-card-info__item-data number-pass">
+                  <a href="{% url 'payment' oper.check_id.pk %}">{{ oper.productPriceToPaking|floatformat:"2g" }}{{ oper.productPriceToPakingCurrency }}</a>
+                </div>
+              </div>
+              <!-- /.transport-card-info__item -->
+
+              <div class="transport-card-info__item">
+                <div class="transport-card-info__item-title">
+                  Стоимость по контракту
+                </div>
+                <div class="transport-card-info__item-data number-pass">
+                  {{ oper.productPriceInUSD|floatformat:"2g" }}{{ oper.productPriceInUSDCurrency }}
+                </div>
+              </div>
+              <!-- /.transport-card-info__item -->
+            </div>
+          </div>
+          <!-- /.transport-card --> 
+          {% endfor %}
+          
+    </div>
+    <!-- /.item-transportation -->
+  </div>
+</div>
+{% endblock %}
+
+{% block popup %} 
+<!-- Попап изменения товара -->
+    <div class="popup-stock">
+      <form 
+      action="{% url 'item' productItem.id %}"
+      method="post"
+      class="popup-stock__content"
+      enctype="multipart/form-data"
+      >
+          {% csrf_token %}
+          <input type="hidden" name="type" value="updateProduct">
+          {% if productItem.appeal_id %}
+            <input type="hidden" name="appeal" value={{ productItem.appeal_id }}>
+          {% endif %}
+          <div class="popup-stock__content-row">
+            <div class="popup-stock__content-item">
+              <label for="" class="popup-stock-label">Дата</label>
+              {{ updateProduct.date }}
+            </div>
+            <div class="popup-stock__content-item">
+              <label for="" class="popup-stock-label">Клиент</label>
+              <input type="text" class="popup-stock-input input-readonly input-client" value="{{ productItem.client_id.name }}" readonly>
+              {{ updateProduct.client_id }}
+            </div>
+            <div class="popup-stock__content-item">
+              <div class="popup-stock-choice">
+                <p class="popup-stock-choice-p">Выбрать</p>
+              </div>
+            </div>
+          </div>
+          <div class="popup-stock__content-row">
+            <div class="popup-stock__content-item">
+              <label for="" class="popup-stock-label">Вес</label>
+              {{ updateProduct.weight }}
+            </div>
+            <div class="popup-stock__content-item">
+              <label for="" class="popup-stock-label">Объем</label>
+              {{ updateProduct.volume }}
+            </div>
+            <div class="popup-stock__content-item">
+              
+            </div>
+          </div>
+          <div class="popup-stock__content-row">
+            <div class="popup-stock__content-item">
+              <label for="" class="popup-stock-label">Имя пакинга</label>
+              {{ updateProduct.namePaking }}
+            </div>
+            <div class="popup-stock__content-item">
+              <label for="" class="popup-stock-label">Стоимость</label>
+              {{ updateProduct.price }}
+            </div>
+            <div class="popup-stock__content-item">
+              <label for="" class="popup-stock-label">Валюта</label>
+              {{ updateProduct.currency }}
+            </div>
+          </div>
+          <div class="popup-stock__content-row">
+            <div class="popup-stock__content-item">
+              <label for="" class="popup-stock-label">Категория</label>
+              {{ updateProduct.category }}
+            </div>
+            <div class="popup-stock__content-item">
+              <label for="" class="popup-stock-label">Транспорт</label>
+              {{ updateProduct.transport }}
+            </div>
+            <div class="popup-stock__content-item">
+              <label for="" class="popup-stock-label">Статус</label>
+              {{ updateProduct.status }}
+            </div>
+          </div>
+          <div class="popup-stock__content-product">
+            <label for="" class="popup-stock-label">Товар</label>
+            {{ updateProduct.nameProduct }}
+          </div>
+          <div class="popup-stock__content-file">
+            <!-- file block start -->
+            {{ productFile.file }}
+            <input type="hidden" name="product_id" id="id_product_id" value={{ productItem.id }}>
+            {{ updateProduct.ContractNumber }}
+            {{ updateProduct.weightBalance }}
+            {{ updateProduct.volumeBalance }}
+            {{ updateProduct.priceBalance }}
+          </div>
+          <div class="popup-stock__btnblock">
+            <button class="table-btn">Сохранить</button>
+            <div class="table-btn btn-exit">Закрыть</div>
+          </div>
+      </form>
+    </div>
+    <!-- /.popup-stock -->
+
+    <div class="choice-client">
+      <div class="choice-client__content">
+        <div class="choice-client__content-head">
+          <div class="choice-client__content-filter">
+            <input type="text" class="choice-client__content-filter-item filter-client" placeholder="Фильтрация">
+          </div>
+          <div class="choice-client__content-exit">&#10008;</div>
+        </div>
+        <div class="choice-client__content-body">
+          {% for client in clients %}
+          <div class="choice-client__content-body-item block-filter-client" title="Код {{ client.kod }} {{ client.name }} - {{ client.contract }}">
+            <p class="choice-client__content-body-item-p">{{ client.kod }} | {{ client.contract }}</p>
+            <input type="hidden" class="choice-client__content-body-item-id" value="{{ client.id }}"> 
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <!-- /.choice-client -->
+
+    <div class="popup-choice-transport">
+      <div class="popup-choice-transport__content">
+        <div class="popup-choice-transport__content-head">
+          <div class="popup-choice-transport__content-filter">
+            <input type="text" class="popup-choice-transport__content-filter-item filter-transport" placeholder="Фильтрация">
+          </div>
+          <div class="popup-choice-transport__content-exit">&#10008;</div>
+        </div>
+        <div class="popup-choice-transport__content-body">
+          {% for item in transport %}
+          <div class="popup-choice-transport__content-body-item block-filter-transport" title="Код {{ client.kod }} {{ client.name }} - {{ client.contract }}">
+            <p class="popup-choice-transport__content-body-item-p">{{ item.date_create|date:"d.m.Y" }}: {{ item.name|frf025 }} - {{ item.category }}</p>
+            <input type="hidden" class="popup-choice-transport__content-body-item-id" value="{{ item.id }}"> 
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <!-- /.popup-choice-transport -->
+
+    <form
+    action="{% url 'transport' %}"
+    method="post"
+    class="popup__create-transport"
+    >
+      <input type="hidden" name="type" value="CreateTransport">
+      {% csrf_token %}
+      <div class="popup__create-transport__content">
+        <div class="popup__create-transport__head">
+          <p class="popup__create-transport__head-p">Создание транспорта</p>
+          <div class="popup__create-transport__head-block">
+            <button class="popup__create-transport-btn" title="Сохранить">&#10004;</button>
+            <div class="popup__create-transport-btn popup__create-transport-btn-exit" title="Закрыть">&#10008;</div>
+          </div>
+        </div>
+        <div class="popup__create-transport__body">
+          <div class="popup__create-transport__body-block">
+            <label for="iput-date-transport" class="popup__create-transport__body-label">Дата создания</label>
+            {{ createTransport.date_create }}
+          </div>
+          <div class="popup__create-transport__body-block">
+            <label for="iput-date-transport" class="popup__create-transport__body-label">Наименовение</label>
+            {{ createTransport.name }}
+          </div>
+          <div class="popup__create-transport__body-block">
+            <label for="iput-date-transport" class="popup__create-transport__body-label">Категория</label>
+            {{ createTransport.category }}
+          </div>
+          <div class="popup__create-transport__body-block">
+            <label for="iput-date-transport" class="popup__create-transport__body-label">Страна</label>
+            {{ createTransport.region }}
+            {{ createTransport.status }}
+          </div>
+        </div>
+      </div>
+    </form>
+    <!-- /.popup__create-transport -->
+
+    <div class="choice-client-price">
+      <div class="choice-client-price__content">
+        <div class="choice-client__content-head">
+          <div class="choice-client__content-filter">
+            <input type="text" class="choice-client__content-filter-item filter-price" placeholder="Фильтрация">
+          </div>
+          <div class="choice-client-price__content-exit">&#10008;</div>
+        </div>
+        <div class="choice-client__content-body">
+          {% for priceC in priceClient %}
+          <div class="choice-client-price__content-body-item content-filter-price" title="Код {{ priceC.client.kod }} {{ priceC.client.name }} | контракт платежа: {{ priceC.ContractNumber }}">
+            <p class="choice-client-price__content-body-item-p">{{ priceC.date|date:"d.m.Y" }}: Код {{ priceC.client.kod }} - {{ priceC.price }}{{ priceC.wellCheck }} | {{ priceC.ContractNumber }}</p>
+            <input type="hidden" class="choice-client-price__content-body-item-id" value="{{ priceC.id }}"> 
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <!-- /.choice-client-price -->
+
+    <form
+    action="{% url 'item' productItem.id  %}"
+    method="post"
+    class="popup-transport"
+    >
+      <input type="hidden" name="type" value="ProductToTransport">
+      {% csrf_token %}
+      <input type="hidden" name="name" value="Провоз">
+      <input type="hidden" name="product_id" value="{{ productItem.id }}">
+      <div class="popup-transport-head">
+        <div class="popup-transport-exit">&#10008;</div>
+        <div class="popup-transport-head__block">
+          <label for="" class="popup-transport-label">Дата</label>
+          {{ AddOperations.date }}
+        </div>
+
+        <div class="popup-transport-head__block bold-block">
+          <label for="" class="popup-transport-label">Название транспорта</label>
+          <input type="text" name="" id="" class="popup-transport-input input-choice input-transport" readonly>
+          {{ AddProductToTransport.transport_id }}
+          <div class="choice-transport">Выбрать</div>
+          <div class="create-transport">Создать</div>
+        </div>
+      </div>
+      <!-- /.popup-transport-head -->
+
+      <div class="popup-transport-body">
+        <div class="popup-transport-body__block">
+          <label for="" class="popup-transport-label">Вес:</label>
+          {{ AddProductToTransport.weight }}
+        </div>
+
+        <div class="popup-transport-body__block">
+          <label for="" class="popup-transport-label">Объем:</label>
+          {{ AddProductToTransport.volume }}  
+        </div>
+
+        <div class="popup-transport-body-product">
+          <label for="" class="popup-transport-label">Примечание</label>
+          {{ AddProductToTransport.comments }}
+        </div>
+      </div>
+      <!-- /.popup-transport-body -->
+
+      <div class="popup-transport-price">
+        <div class="popup-transport-price-item">
+          <div class="popup-transport-price-block">
+            <input type="text" class="input-price-check input-choice" readonly>
+            {{ AddOperations.check_id }}
+            <div class="input-price-check__btn">Выбрать</div>
+          </div>
+          <div class="popup-transport-price-block">
+            {{ AddOperations.productPriceToPaking }}
+            {{ AddOperations.productPriceToPakingCurrency }}
+            {{ AddOperations.productPriceInUSD }}
+            {{ AddOperations.productPriceInUSDCurrency }}
+          </div>
+        </div>
+        <!-- /.popup-transport-price-item -->
+        <button class="popup-transport-save">Сохранить</button>
+      </div>
+      <!-- /.popup-transport-price -->
+      
+    </form>
+    <!-- /.popup-transport -->
+{% endblock %}
+
+{% block scripts %}
+  <script src="{% static 'product-page/js/product-page.js' %} "></script>
+  <script src="{% static 'main/js/open.js' %} "></script>
+{% endblock %}

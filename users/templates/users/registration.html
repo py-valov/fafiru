@@ -1,0 +1,60 @@
+{% if user.is_superuser %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Moon+Dance&family=Roboto:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="{% static 'modules/normalize.css' %} " />
+  <link rel="stylesheet" href="{% static 'modules/base.css' %} " />
+  <link rel="stylesheet" href="{% static 'modules/header.css' %} " />
+  <link rel="stylesheet" href="{% static 'modules/popup.css' %} " />
+  <link rel="shortcut icon" href="{% static 'main/images/favicon.ico' %}" type="image/x-icon">
+
+  <title>{{ title }}</title>
+</head>
+<body>
+  <form 
+  action="{% url 'registration' %}"
+  method="post"
+  class="form"
+  >
+  {% csrf_token %}
+  <div class="block">
+    <label for="login">Логин</label>
+    {{ form.username }}
+  </div>
+  <div class="block">
+    <label for="password">Пароль</label>
+    {{ form.password1 }}
+  </div>
+  <div class="block">
+    <label for="password">Подтверждение пароля</label>
+    {{ form.password2 }}
+  </div>
+  <div class="block">
+    <label for="firstname">Имя</label>
+    {{ form.first_name }}
+  </div>
+  <div class="block">
+    <label for="lastname">Фамилия</label>
+    {{ form.last_name }}
+  </div>
+  <div class="block">
+    <label for="grupp">Email</label>
+    {{ form.email }}
+  </div>
+  <button>Сохранить</button>
+  <a href="{% url 'home' %}">На главную</a>
+</form>
+</body>
+</html>
+{% endif %}

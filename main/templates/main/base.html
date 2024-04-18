@@ -1,0 +1,184 @@
+{% load static %}
+{{ redirect_to_login_immediately }}
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Moon+Dance&family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{% static 'modules/normalize.css' %} " />
+    <link rel="stylesheet" href="{% static 'modules/base.css' %} " />
+    <link rel="stylesheet" href="{% static 'modules/header.css' %} " />
+    <link rel="stylesheet" href="{% static 'modules/popup.css' %} " />
+    <link rel="shortcut icon" href="{% static 'main/images/favicon.ico' %}" type="image/x-icon">
+    <title>{{ title }}</title>
+    {% block csslink %} {% endblock csslink %}
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="headers">
+        <div class="headers__header">
+          <div class="container">
+            <a href="{% url 'home' %}" class="header__logo">Fafiru&trade;</a>
+          </div>
+        </div>
+        <div class="headers__menu">
+          <div class="container">
+            <div class="headers__menu-content">
+              {% block btncreate %} {% endblock btncreate %}
+              
+              
+            </div>
+          </div>
+        </div>
+      </header>
+      <!-- headers end -->
+
+      <div class="main-menu">
+        <div class="main-menu__btn">МЕНЮ</div>
+        <div class="main-menu__popup">
+          <div class="main-menu__popup-content">
+            <div class="main-menu__popup-content-head">
+              <h2 class="main-menu__popup-content-head-user">{{ user.first_name }} {{ user.last_name }}</h2>
+            </div>
+            <div class="main-menu__popup-content-body">
+              <div class="main-menu__popup-content-body-icons">
+                <a
+                  href="https://www.google.com/"
+                  class="main-menu__popup-content-body-icon"
+                  title="Google"
+                  target="_blank"
+                  ><img
+                    class="main-menu__popup-content-body-icon-img"
+                    src="{% static 'main/images/google-icon.svg' %}"
+                    alt="Google"
+                /></a>
+
+                <a
+                  href="https://e.mail.ru/inbox/"
+                  class="main-menu__popup-content-body-icon"
+                  title="Email"
+                  target="_blank"
+                  ><img
+                    class="main-menu__popup-content-body-icon-img"
+                    src="{% static 'main/images/email.svg' %}"
+                    alt="Email"
+                /></a>
+
+                <a
+                  href="https://bankiros.ru/converter?from=cny&to=usd&cbr_first=10499.97"
+                  class="main-menu__popup-content-body-icon"
+                  title="Bankiros"
+                  target="_blank"
+                  ><img
+                    class="main-menu__popup-content-body-icon-img"
+                    src="{% static 'main/images/finance.png' %}"
+                    alt="Bankiros"
+                /></a>
+
+                <a
+                  href="https://www.bankofchina.com/sourcedb/whpj/enindex_1619.html"
+                  class="main-menu__popup-content-body-icon"
+                  title="Bankofchina"
+                  target="_blank"
+                  ><img
+                    class="main-menu__popup-content-body-icon-img"
+                    src="{% static 'main/images/bankofchina.svg' %}"
+                    alt="Bankofchina"
+                /></a>
+
+                <a
+                  href="https://findtm.ru/"
+                  class="main-menu__popup-content-body-icon"
+                  title="findtm"
+                  target="_blank"
+                  ><img
+                    class="main-menu__popup-content-body-icon-img"
+                    src="{% static 'main/images/findtm.svg' %}"
+                    alt="findtm"
+                /></a>
+
+                <a
+                  href="https://fsa.gov.ru/#"
+                  class="main-menu__popup-content-body-icon"
+                  title="fsa.gov"
+                  target="_blank"
+                  ><img
+                    class="main-menu__popup-content-body-icon-img"
+                    src="{% static 'main/images/fsa.svg' %}"
+                    alt="fsa.gov"
+                /></a>
+
+                <a
+                  href="https://www.ifcg.ru/kb/tnved/search/?q=8207301000&g="
+                  class="main-menu__popup-content-body-icon"
+                  title="ifcg"
+                  target="_blank"
+                  ><img
+                    class="main-menu__popup-content-body-icon-img"
+                    src="{% static 'main/images/ifcg.png' %}"
+                    alt="ifcg"
+                /></a>
+              </div>
+              <div class="main-menu__popup-content-body-nav">
+                <ul class="main-menu__popup-content-body-nav-ul">
+                  <li class="main-menu__popup-content-body-nav-li">
+                    <a href="{% url 'home' %}" class="main-menu__popup-content-body-nav-link"
+                      >Главная &#10081;</a
+                    >
+                  </li>
+                  <li class="main-menu__popup-content-body-nav-li">
+                    <a href="{% url 'finance' %}" class="main-menu__popup-content-body-nav-link"
+                      >Финансы &#63754;</a
+                    >
+                  </li>
+                  <li class="main-menu__popup-content-body-nav-li">
+                    <a href="{% url 'product' %}" class="main-menu__popup-content-body-nav-link"
+                      >Склад &#8962;</a
+                    >
+                  </li>
+                  <li class="main-menu__popup-content-body-nav-li">
+                    <a href="{% url 'transport' %}" class="main-menu__popup-content-body-nav-link"
+                      >Провозы &#9951;</a
+                    >
+                  </li>
+                  <li class="main-menu__popup-content-body-nav-li">
+                    <a href="{% url 'appealPage' %}" class="main-menu__popup-content-body-nav-link"
+                      >Задачи &#128366;</a
+                    >
+                  </li>
+                  {% if user.is_superuser %}
+                  <li class="main-menu__popup-content-body-nav-li">
+                    <a href="{% url 'registration' %}" class="main-menu__popup-content-body-nav-link"
+                      >Регистрация &#8742;</a
+                    >
+                  </li>
+                  {% endif %}
+                  <li class="main-menu__popup-content-body-nav-li">
+                    <a href="{% url 'logout' %}" class="main-menu__popup-content-body-nav-link"
+                      >Выйти &#8742;</a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--main-menu end  -->
+      {% block content %} {% endblock content %}
+    </div>
+    <!-- wrapper end -->
+    {% block popup %} 
+    {% endblock popup %} 
+    
+    {% block scripts %} 
+    {% endblock scripts %}
+  </body>
+</html>

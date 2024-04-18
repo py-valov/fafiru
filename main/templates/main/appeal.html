@@ -1,0 +1,161 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load payment_tags %}
+{% block csslink%}
+  <link rel="stylesheet" href="{% static 'appeal/css/appeal.css' %}" />
+{% endblock %}
+  
+{% block content %}
+  <div class="page">
+    <div class="container">
+      {% if user == appeal.user_create or user.is_superuser %}
+      <form action="{% url 'appeal' appeal.pk %}" method="post" class="appeal-form" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="type" value="AppealUpdate">
+        <div class="appeal-form-head">
+          <div>
+            <a href="{% url 'client' appeal.client.id %}">{{ appeal.client }}  &#9786;</a>
+            <p>Создатель: {{ appeal.user_create.first_name }} {{ appeal.user_create.last_name }}</p>
+          </div>
+          {% if appeal.category == "Счета" %}
+            <a href="{% url 'payment' appealCheck.pk %}" class="appeal-page">&#8617; К счету</a>
+          {% endif %}
+          {% if appeal.category == "Склад" %}
+            <a href="{% url 'item' appealProduct.pk %}" class="appeal-page">&#8617; К пакингу</a>
+          {% endif %}
+          <a href="{% url 'appealPage' %}" class="appeal-page">&#8617; В задачи</a>
+        </div>
+        {{ formAppeal.client }}
+        <div class="content-appeal-items">
+          <div class="content-appeal-item">
+            <label for="" class="popup__create-appeal__body-top-label">Дата</label>
+            {{ formAppeal.date }}
+          </div>
+
+          {% if appeal.category == "Счета" or appeal.category == "Склад" %}
+            <div class="content-appeal-item">
+              <label for="" class="popup__create-appeal__body-top-label">Категория</label>
+              <p class="popup__create-appeal__body-top-input text-center" >{{ appeal.category }}</p>
+              <input type="hidden" name="category" value="{{ appeal.category }}">
+            </div>
+          {% else %}
+            <div class="content-appeal-item">
+              <label for="" class="popup__create-appeal__body-top-label">Категория</label>
+              {{ formAppeal.category }}
+            </div>
+          {% endif %}
+
+          <div class="content-appeal-item">
+            <label for="" class="popup__create-appeal__body-top-label">Статус выполнения</label>
+            {{ formAppeal.doneAppeal }}
+          </div>
+
+          <div class="content-appeal-item-textaria">
+            <label for="" class="popup__create-appeal__body-top-label">Тема обращения</label>
+            {{ formAppeal.content }}
+          </div>
+        </div>
+        <button class="page__btn">Сохранить &#128190;</button>
+        {% if appealItem.file %}
+        <a href="{{ appealItem.file.url }}" class="file-link" target="__blank ">{{ appealItem.file|frf24  }}</a>
+        {% else %}
+        <label
+            for="id_file"
+            class="popup-history__btn-file"
+            >Загрузить</label
+          >
+          <input type="file" name="file" id="id_file" class="popup-history__file">
+        {% endif %}
+        <a href="{% url 'appealComments' %}">&#8617; К комментариям</a>
+      </form>
+      {% else %}
+
+      <div class="appeal-form">
+        <div class="appeal-form-head">
+          <div>
+            <a href="{% url 'client' appeal.client.id %}">{{ appeal.client }}  &#9786;</a>
+            <p>Создатель: {{ appeal.user_create.first_name }} {{ appeal.user_create.last_name }}</p>
+          </div>
+          <a href="{% url 'appealPage' %}" class="appeal-page">&#8617; В задачи</a>
+        </div>
+        <div class="content-appeal-items">
+          <div class="content-appeal-item">
+            <label for="" class="popup__create-appeal__body-top-label">Дата</label>
+            <p class="popup__create-appeal__body-top-input text-center" >{{ appeal.date|date:"d.m.Y" }}</p>
+          </div>
+
+          <div class="content-appeal-item">
+            <label for="" class="popup__create-appeal__body-top-label">Категория</label>
+            <p class="popup__create-appeal__body-top-input text-center" >{{ appeal.category }}</p>
+          </div>
+
+          <div class="content-appeal-item">
+            <label for="" class="popup__create-appeal__body-top-label">Статус выполнения</label>
+            <p class="popup__create-appeal__body-top-input text-center" >
+              {% if appeal.doneAppeal == False %}
+              В работе
+              {% else %}
+              Выполнено
+              {% endif %}
+            </p>
+          </div>
+
+          <div class="content-appeal-item-textaria">
+            <label for="" class="popup__create-appeal__body-top-label">Тема обращения</label>
+            <p class="popup__create-appeal__body-bottom-text" >{{ appeal.content }}</p>
+          </div>
+        </div>
+        {% if appealItem.file %}
+        <a href="{{ appealItem.file.url }}" class="file-link" target="__blank ">{{ appealItem.file|frf24  }}</a>
+        {% endif %}
+      </div>
+
+      {% endif %}
+
+      <form action="{% url 'appeal' appeal.pk %}" class="comment-form" method="post" enctype="multipart/form-data">
+          {% csrf_token %}  
+          <input type="hidden" name="type" value="AppealComment">
+          <input type="hidden" name="user" id="id_user" value="{{ user.pk }}">
+          <input type="hidden" name="appeal" id="id_appeal" value="{{ appeal.pk }}">
+          {{ formComments.content }}
+          <div class="comment-form__footer">
+          <label
+            for="id_file_comment"
+            class="popup-history__btn-file"
+            >Загрузить</label
+          >
+          {{ formComments.file_comment }}
+          <button class="comment-save">Отправить</button>
+          </div>
+      </form>
+
+      <div class="comment-block">
+        {% for comment in appealComments %}
+        <div class="comment-item">
+          <div class="comment-item__head">
+            {{ comment.date_create|date:"День: d.m.Y Время: H:i" }}
+            <div class="comment-item__head-user">
+              <p class="">Комментатор: {{ comment.user.first_name }} {{ comment.user.last_name }}</p>
+            </div>
+            
+          </div>
+          
+          <div class="comment-item__body">
+            <p class="comment-item__body">{{ comment.content }}</p>
+          </div>
+          
+          <div class="comment-item__fotter">
+            <a href="" target="_blank" class="comment-item__fotter-a">{{ comment.file_comment|frf27 }}</a>
+          </div>
+          
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'appeal/js/appeal.js' %}"></script>
+    <script src="{% static 'client-page/js/open.js' %}"></script>
+{% endblock %}
+

@@ -1,0 +1,84 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load payment_tags %}
+{% block csslink %}
+  <link rel="stylesheet" href="{% static 'appeal-page/css/appeal-page.css' %}" />
+{% endblock %}
+  
+{% block content %}
+<div class="page">
+  <div class="appeal-content">
+    <div class="appeal-main">
+      <div class="appeal-category">
+        <div class="appeal-category-btn all appeal-category-btn-active">Все</div>
+        <div class="appeal-category-btn important">Склад</div>
+        <div class="appeal-category-btn information">Счета</div>
+        <div class="appeal-category-btn product">Расчет товара</div>
+        <div class="appeal-category-btn delivery">Доставка</div>
+      </div>
+      <!-- /.appeal-category -->
+
+      <div class="appeal-table">
+        <div class="appeal-table-head">
+          
+          <div class="appeal-table-head-footer">
+            <div class="appeal-table-head__elem-left"></div>
+            <a href="{% url 'appealComments' %}" class="appeal-page">К комментариям &#8594;</a>
+            <h3 class="appeal-table-head__title">Задачи в работе</h3>
+          </div>
+
+          <div class="appeal-table-head__elem-bottom"></div>
+        </div>
+        <!-- /.appeal-table-head -->
+
+        <div class="appeal-table-body">
+          {% for ap in appeal %}
+          <div class="appeal-table-body__item">
+            <div class="appeal-table-body__item-head">
+              <p>{{ ap.date|date:"d.m.Y" }} | <a href="{% url 'client' ap.client.id %}">{{ ap.client.kod }} - {{ ap.client.name|frf020 }}</a> | Категория: {{ ap.category }}</p>
+            </div>
+
+            <div class="appeal-table-panel">
+              <a href="{% url 'appeal' ap.pk %}" class="appeal-table-panel-a">Открыть &rArr;</a>
+              {% if ap.file %}
+              <a href="{{ ap.file.url }}" class="file-link" target="__blank ">{{ ap.file|frf24  }}</a>
+              {% endif %}
+            </div>
+
+            <div class="appeal-table-body__item-body">
+              <p class="appeal-table-body__item-body-p">{{ ap.content }}</p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <!-- /.appeal-main -->
+
+    <div class="appeal-info">
+      <h3 class="appeal-info-h">Количество задач по клиентам</h3>
+      <div class="appeal-info-block">
+        <div class="appeal-info-block-head">
+          <p class="appeal-info-block-head-p">Клиент</p>
+          <p class="appeal-info-block-head-p">Задачи</p>
+        </div>
+        
+        <div class="appeal-info-block-body">
+          {% for key, value in appealCount.items %}
+          <div class="appeal-info-block-body-item">
+            <a href="{% url 'client' value.id %}" title="{{ value.name }}" class="appeal-info-block-body-item__left">{{ key }}</a>
+            <p class="appeal-info-block-body-item__right">{{ value.val }}</p>
+          </div>
+          {% endfor %}
+          <!-- /.appeal-info-block-body-item -->
+        </div>
+      </div>
+    </div>
+    <!-- /.appeal-info -->
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'appeal-page/js/appeal-page.js' %}"></script>
+    <script src="{% static 'client-page/js/open.js' %}"></script>
+{% endblock %}
